@@ -3708,6 +3708,58 @@
             color: #dff1ff;
         }
 
+        .data-mgmt-stage-status {
+            display: grid;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(111, 124, 138, 0.12);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+                rgba(255, 255, 255, 0.03);
+        }
+
+        .data-mgmt-stage-status-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .data-mgmt-stage-status-label {
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+
+        .data-mgmt-stage-status-value {
+            margin-top: 4px;
+            color: #eef3f8;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .data-mgmt-stage-chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 122, 204, 0.24);
+            background: rgba(0, 122, 204, 0.12);
+            color: #d8efff;
+            font-size: 11px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .data-mgmt-stage-status-note {
+            color: #9aa7b4;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         .data-mgmt-layout {
             display: grid;
             grid-template-columns: 360px minmax(0, 1fr);
@@ -6952,6 +7004,26 @@
             color: #005fb8 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-stage-status {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-stage-status-label,
+        body[data-theme="light"] .data-mgmt-stage-status-note {
+            color: #66707b !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-stage-status-value {
+            color: #1f2328 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-stage-chip {
+            background: #e8f2ff !important;
+            border-color: #bfdbfe !important;
+            color: #005fb8 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-sidebar,
         body[data-theme="light"] .data-mgmt-main {
             border-color: #d8dee4 !important;
@@ -7692,6 +7764,16 @@
                                     <button class="data-mgmt-stage-btn active" id="dataMgmtStageRawBtn" type="button">原始数据</button>
                                     <button class="data-mgmt-stage-btn" id="dataMgmtStageCleanedBtn" type="button">清洗后共享数据</button>
                                 </div>
+                            </div>
+                            <div class="data-mgmt-stage-status">
+                                <div class="data-mgmt-stage-status-top">
+                                    <div>
+                                        <div class="data-mgmt-stage-status-label">当前阶段</div>
+                                        <div class="data-mgmt-stage-status-value" id="dataMgmtStageStatusTitle">原始数据</div>
+                                    </div>
+                                    <div class="data-mgmt-stage-chip" id="dataMgmtStageStatusChip">待清洗</div>
+                                </div>
+                                <div class="data-mgmt-stage-status-note" id="dataMgmtStageStatusNote">当前阶段适合上传、初筛和扫描原始数据。</div>
                             </div>
                             <div class="training-row" style="margin-bottom:0;">
                                 <div class="training-label">说明：</div>
@@ -9334,34 +9416,45 @@
             }
 
             function updateSharedDataStageUI() {
-                const isCleaned = sharedDataStage === 'cleaned';
-                const rawBtn = document.getElementById('dataMgmtStageRawBtn');
-                const cleanedBtn = document.getElementById('dataMgmtStageCleanedBtn');
-                const titleEl = document.getElementById('dataMgmtPanelTitle');
-                const noteEl = document.getElementById('dataMgmtStageNote');
-                const publishBtn = document.getElementById('dataMgmtPublishBtn');
-                const detectBtn = document.getElementById('dataMgmtDistributeDetectBtn');
-                const segmentBtn = document.getElementById('dataMgmtDistributeSegmentBtn');
-                const uploadBtn = document.getElementById('dataMgmtUploadBtn');
-                const refreshBtn = document.getElementById('dataMgmtRefreshBtn');
-                const deleteBtn = document.getElementById('dataMgmtDeleteBtn');
-                const scanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
-                const scanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
-                const hintEl = document.getElementById('dataMgmtActionHint');
+                const isCleaned = sharedDataStage === "cleaned";
+                const rawBtn = document.getElementById("dataMgmtStageRawBtn");
+                const cleanedBtn = document.getElementById("dataMgmtStageCleanedBtn");
+                const titleEl = document.getElementById("dataMgmtPanelTitle");
+                const noteEl = document.getElementById("dataMgmtStageNote");
+                const publishBtn = document.getElementById("dataMgmtPublishBtn");
+                const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
+                const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
+                const uploadBtn = document.getElementById("dataMgmtUploadBtn");
+                const refreshBtn = document.getElementById("dataMgmtRefreshBtn");
+                const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
+                const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
+                const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
+                const hintEl = document.getElementById("dataMgmtActionHint");
+                const stageStatusTitleEl = document.getElementById("dataMgmtStageStatusTitle");
+                const stageStatusChipEl = document.getElementById("dataMgmtStageStatusChip");
+                const stageStatusNoteEl = document.getElementById("dataMgmtStageStatusNote");
                 const selectedCount = getSelectedSharedDataFilenames().length;
                 const disableStageSwitch = sharedDataBusy || sharedDataActionBusy;
                 const disableStageActions = sharedDataBusy || sharedDataActionBusy;
-                if (rawBtn) rawBtn.classList.toggle('active', !isCleaned);
-                if (cleanedBtn) cleanedBtn.classList.toggle('active', isCleaned);
+
+                if (rawBtn) rawBtn.classList.toggle("active", !isCleaned);
+                if (cleanedBtn) cleanedBtn.classList.toggle("active", isCleaned);
                 if (rawBtn) rawBtn.disabled = disableStageSwitch || !isCleaned;
                 if (cleanedBtn) cleanedBtn.disabled = disableStageSwitch || isCleaned;
-                if (titleEl) titleEl.textContent = isCleaned ? '清洗后共享数据' : '原始共享数据';
+
+                if (titleEl) titleEl.textContent = isCleaned ? "清洗后数据" : "原始数据";
                 if (noteEl) noteEl.textContent = isCleaned
-                    ? '清洗后的共享数据可分发到目标识别或图像分割任务目录。'
-                    : '原始共享数据池用于上传和初筛；确认可用后再发布到共享清洗池。';
+                    ? "清洗后的数据可直接分发到目标识别或图像分割工作区。"
+                    : "原始数据阶段用于上传、初筛和扫描，确认可用后再发布到清洗后数据。";
+                if (stageStatusTitleEl) stageStatusTitleEl.textContent = isCleaned ? "清洗后数据" : "原始数据";
+                if (stageStatusChipEl) stageStatusChipEl.textContent = isCleaned ? "可分发" : "待清洗";
+                if (stageStatusNoteEl) stageStatusNoteEl.textContent = isCleaned
+                    ? "当前阶段适合复核后直接分发到目标识别或图像分割工作区。"
+                    : "当前阶段适合上传、初筛和扫描原始数据。";
                 if (hintEl) hintEl.textContent = isCleaned
-                    ? '当前可直接分发到目标识别或图像分割任务。'
-                    : '先从原始共享数据中筛出可用样本，再发布到共享清洗池。';
+                    ? "当前可直接分发到目标识别或图像分割工作区。"
+                    : "先从原始数据中筛出可用样本，再发布到清洗后数据。";
+
                 if (uploadBtn) uploadBtn.disabled = disableStageActions;
                 if (refreshBtn) refreshBtn.disabled = disableStageActions;
                 if (scanDamagedBtn) scanDamagedBtn.disabled = disableStageActions;
@@ -9371,7 +9464,6 @@
                 if (detectBtn) detectBtn.disabled = disableStageActions || !isCleaned || selectedCount <= 0;
                 if (segmentBtn) segmentBtn.disabled = disableStageActions || !isCleaned || selectedCount <= 0;
             }
-
             function renderSharedDataList() {
                 const listEl = document.getElementById('dataMgmtList');
                 const summaryEl = document.getElementById('dataMgmtSummaryText');
