@@ -3761,31 +3761,16 @@
         }
 
         .data-mgmt-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 340px;
-            gap: 18px;
+            display: block;
             height: 100%;
             width: 100%;
         }
 
-        .data-mgmt-sidebar,
         .data-mgmt-main {
             min-height: 0;
             border-radius: 18px;
             border: 1px solid rgba(111, 124, 138, 0.16);
             overflow: hidden;
-        }
-
-        .data-mgmt-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding: 16px;
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%),
-                rgba(37, 37, 38, 0.98);
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-            overflow-y: auto;
         }
 
         .data-mgmt-main {
@@ -3800,15 +3785,14 @@
         }
 
         .data-mgmt-workspace {
-            display: grid;
-            grid-template-rows: minmax(0, 1fr);
+            display: flex;
+            flex-direction: column;
             gap: 14px;
             min-height: 0;
             flex: 1;
         }
 
         #dataManagement .data-mgmt-main .data-mgmt-steps,
-        #dataManagement .data-mgmt-main #dataMgmtDropzone,
         #dataManagement #dataMgmtUploadBtn {
             display: none;
         }
@@ -3866,10 +3850,6 @@
 
         .data-mgmt-dropzone.compact .data-mgmt-dropzone-tips {
             margin-top: 12px;
-        }
-
-        #dataMgmtSidebarDropzone {
-            margin-bottom: 12px;
         }
 
         .data-mgmt-dropzone:hover,
@@ -3944,56 +3924,12 @@
         .data-mgmt-preview-card {
             display: flex;
             flex-direction: column;
+            flex: 1;
             min-height: 0;
             border: 1px solid rgba(111, 124, 138, 0.14);
             border-radius: 18px;
             background: rgba(21, 25, 31, 0.56);
             overflow: hidden;
-        }
-
-        .data-mgmt-section {
-            border: 1px solid rgba(111, 124, 138, 0.14);
-            border-radius: 16px;
-            background: rgba(19, 23, 29, 0.52);
-            overflow: hidden;
-        }
-
-        .data-mgmt-sidebar .data-mgmt-section {
-            background: rgba(17, 20, 25, 0.56);
-        }
-
-        .data-mgmt-sidebar {
-            gap: 12px;
-        }
-
-        .data-mgmt-sidebar .data-mgmt-section {
-            border-radius: 14px;
-        }
-
-        .data-mgmt-section-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 12px 14px 8px;
-        }
-
-        .data-mgmt-section-title {
-            color: #dce5ef;
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: 0.01em;
-        }
-
-        .data-mgmt-section-subtitle {
-            color: #8f9cab;
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .data-mgmt-section-body {
-            padding: 0 14px 14px;
         }
 
         .data-mgmt-action-grid {
@@ -4571,14 +4507,6 @@
         }
 
         @media (max-width: 1180px) {
-            .data-mgmt-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .data-mgmt-sidebar {
-                max-height: none;
-            }
-
             .data-mgmt-steps {
                 grid-template-columns: 1fr;
             }
@@ -4621,17 +4549,8 @@
                 margin-left: 0;
             }
 
-            .data-mgmt-sidebar,
             .data-mgmt-main {
                 padding: 14px;
-            }
-
-            .data-mgmt-section-head,
-            .data-mgmt-panel-head,
-            .data-mgmt-section-body,
-            .data-mgmt-panel-body {
-                padding-left: 14px;
-                padding-right: 14px;
             }
         }
 
@@ -8356,7 +8275,7 @@
                         </div>
                     </div>
 
-                    <label class="data-mgmt-dropzone" id="dataMgmtDropzone">
+                    <label class="data-mgmt-dropzone compact" id="dataMgmtDropzone">
                         <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
                         <div>
                             <div class="data-mgmt-dropzone-icon">↑</div>
@@ -8411,59 +8330,6 @@
                 </div>
             </section>
 
-            <aside class="data-mgmt-sidebar">
-                <section class="data-mgmt-section">
-                    <div class="data-mgmt-section-head">
-                        <div>
-                            <div class="data-mgmt-section-title">数据管理</div>
-                            <div class="data-mgmt-section-subtitle">切换数据阶段并查看当前阶段的处理状态。</div>
-                        </div>
-                    </div>
-                    <div class="data-mgmt-section-body">
-                        <div class="data-mgmt-stage-row">
-                            <div class="training-row">
-                                <div class="training-label">当前视图：</div>
-                                <div class="data-mgmt-stage-switch">
-                                    <button class="data-mgmt-stage-btn active" id="dataMgmtStageRawBtn" type="button">原始数据</button>
-                                    <button class="data-mgmt-stage-btn" id="dataMgmtStageCleanedBtn" type="button">清洗后数据</button>
-                                </div>
-                            </div>
-                            <div class="data-mgmt-stage-status">
-                                <div class="data-mgmt-stage-status-top">
-                                    <div>
-                                        <div class="data-mgmt-stage-status-label">当前阶段</div>
-                                        <div class="data-mgmt-stage-status-value" id="dataMgmtStageStatusTitle">原始数据</div>
-                                    </div>
-                                    <div class="data-mgmt-stage-chip" id="dataMgmtStageStatusChip">待清洗</div>
-                                </div>
-                                <div class="data-mgmt-stage-status-note" id="dataMgmtStageStatusNote">当前阶段适合上传、初筛和扫描原始数据。</div>
-                            </div>
-                            <div class="training-row" style="margin-bottom:0;">
-                                <div class="training-label">说明：</div>
-                                <div class="sidebar-note" id="dataMgmtStageNote">原始数据阶段用于上传、初筛和扫描，确认可用后再发布到清洗后数据。</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="data-mgmt-section">
-                    <div class="data-mgmt-section-head">
-                        <div>
-                            <div class="data-mgmt-section-title">清洗结果</div>
-                            <div class="data-mgmt-section-subtitle">扫描损坏图与重复图后，在这里集中查看结果。</div>
-                        </div>
-                        <div class="data-mgmt-panel-meta" id="dataMgmtScanSummary">未扫描</div>
-                    </div>
-                    <div class="data-mgmt-section-body">
-                        <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
-                            <div class="data-mgmt-empty">
-                                <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
-                            </div>
-                        </div>
-                        <div class="data-mgmt-side-note" id="dataMgmtActionHint">先从原始数据中筛出可用样本，再发布到清洗后数据。</div>
-                    </div>
-                </section>
-            </aside>
         </div>
     </div>
     <div class="tab-content" id="augmentation">
@@ -10084,42 +9950,18 @@
 
             function updateSharedDataStageUI() {
                 const isCleaned = sharedDataStage === "cleaned";
-                const rawBtn = document.getElementById("dataMgmtStageRawBtn");
-                const cleanedBtn = document.getElementById("dataMgmtStageCleanedBtn");
                 const titleEl = document.getElementById("dataMgmtPanelTitle");
-                const noteEl = document.getElementById("dataMgmtStageNote");
                 const publishBtn = document.getElementById("dataMgmtPublishBtn");
                 const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
-                const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
+                const uploadDropzoneEl = document.getElementById("dataMgmtDropzone");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
                 const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
-                const hintEl = document.getElementById("dataMgmtActionHint");
-                const stageStatusTitleEl = document.getElementById("dataMgmtStageStatusTitle");
-                const stageStatusChipEl = document.getElementById("dataMgmtStageStatusChip");
-                const stageStatusNoteEl = document.getElementById("dataMgmtStageStatusNote");
                 const selectedCount = getSelectedSharedDataFilenames().length;
-                const disableStageSwitch = sharedDataBusy || sharedDataActionBusy;
                 const disableStageActions = sharedDataBusy || sharedDataActionBusy;
 
-                if (rawBtn) rawBtn.classList.toggle("active", !isCleaned);
-                if (cleanedBtn) cleanedBtn.classList.toggle("active", isCleaned);
-                if (rawBtn) rawBtn.disabled = disableStageSwitch || !isCleaned;
-                if (cleanedBtn) cleanedBtn.disabled = disableStageSwitch || isCleaned;
-
                 if (titleEl) titleEl.textContent = isCleaned ? "清洗后数据" : "原始数据";
-                if (noteEl) noteEl.textContent = isCleaned
-                    ? "清洗后的数据可直接分发到目标识别或图像分割工作区。"
-                    : "原始数据阶段用于上传、初筛和扫描，确认可用后再发布到清洗后数据。";
-                if (stageStatusTitleEl) stageStatusTitleEl.textContent = isCleaned ? "清洗后数据" : "原始数据";
-                if (stageStatusChipEl) stageStatusChipEl.textContent = isCleaned ? "可分发" : "待清洗";
-                if (stageStatusNoteEl) stageStatusNoteEl.textContent = isCleaned
-                    ? "当前阶段适合复核后直接分发到目标识别或图像分割工作区。"
-                    : "当前阶段适合上传、初筛和扫描原始数据。";
-                if (hintEl) hintEl.textContent = isCleaned
-                    ? "当前可直接分发到目标识别或图像分割工作区。"
-                    : "先从原始数据中筛出可用样本，再发布到清洗后数据。";
                 if (dataMgmtWorkflowSteps.length) {
                     dataMgmtWorkflowSteps.forEach((step, idx) => {
                         const active = isCleaned ? idx >= 1 : idx === 0;
@@ -10219,18 +10061,12 @@
             }
 
             function renderSharedDataScanResults() {
-                const summaryEl = document.getElementById('dataMgmtScanSummary');
                 const resultsEl = document.getElementById('dataMgmtScanResults');
                 if (!resultsEl) return;
 
                 const damagedCount = Number(sharedDataDamagedScan?.count || 0);
                 const duplicateGroupCount = Number(sharedDataDuplicateScan?.group_count || 0);
                 const duplicateCandidateCount = Number(sharedDataDuplicateScan?.candidate_delete_count || 0);
-
-                if (summaryEl) {
-                    if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = '未扫描';
-                    else summaryEl.textContent = `损坏 ${damagedCount} · 重复组 ${duplicateGroupCount} · 候选 ${duplicateCandidateCount}`;
-                }
 
                 const parts = [];
                 const summaryCards = (!sharedDataDamagedScan && !sharedDataDuplicateScan) ? '' : `
@@ -10609,8 +10445,6 @@
             const authUserSaveBtn = document.getElementById('authUserSaveBtn');
             const authUserDeleteBtn = document.getElementById('authUserDeleteBtn');
             const selfPasswordSaveBtn = document.getElementById('selfPasswordSaveBtn');
-            const dataMgmtStageRawBtn = document.getElementById('dataMgmtStageRawBtn');
-            const dataMgmtStageCleanedBtn = document.getElementById('dataMgmtStageCleanedBtn');
             const dataMgmtPublishBtn = document.getElementById('dataMgmtPublishBtn');
             const dataMgmtDistributeDetectBtn = document.getElementById('dataMgmtDistributeDetectBtn');
             const dataMgmtDistributeSegmentBtn = document.getElementById('dataMgmtDistributeSegmentBtn');
@@ -10618,7 +10452,7 @@
             const dataMgmtScanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
             const dataMgmtScanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
-            const dataMgmtDropzone = document.getElementById('dataMgmtSidebarDropzone') || document.getElementById('dataMgmtDropzone');
+            const dataMgmtDropzone = document.getElementById('dataMgmtDropzone');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
@@ -10635,8 +10469,6 @@
 
             updateSharedDataStageUI();
             renderSharedDataScanResults();
-            if (dataMgmtStageRawBtn) dataMgmtStageRawBtn.addEventListener('click', () => loadSharedDataList('raw', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600)));
-            if (dataMgmtStageCleanedBtn) dataMgmtStageCleanedBtn.addEventListener('click', () => loadSharedDataList('cleaned', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600)));
             if (dataMgmtScanDamagedBtn) {
                 dataMgmtScanDamagedBtn.addEventListener('click', async () => {
                     try {
@@ -10655,10 +10487,52 @@
                     }
                 });
             }
-            if (dataMgmtTabRaw) dataMgmtTabRaw.addEventListener('click', () => { sharedDataViewTab = 'raw'; renderSharedDataList(); });
-            if (dataMgmtTabDuplicate) dataMgmtTabDuplicate.addEventListener('click', () => { sharedDataViewTab = 'duplicate'; renderSharedDataList(); });
-            if (dataMgmtTabDamaged) dataMgmtTabDamaged.addEventListener('click', () => { sharedDataViewTab = 'damaged'; renderSharedDataList(); });
-            if (dataMgmtTabCleaned) dataMgmtTabCleaned.addEventListener('click', () => { sharedDataViewTab = 'cleaned'; renderSharedDataList(); });
+            if (dataMgmtTabRaw) {
+                dataMgmtTabRaw.addEventListener('click', () => {
+                    if (sharedDataStage !== 'raw') {
+                        loadSharedDataList('raw', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        return;
+                    }
+                    sharedDataViewTab = 'raw';
+                    renderSharedDataList();
+                });
+            }
+            if (dataMgmtTabDuplicate) {
+                dataMgmtTabDuplicate.addEventListener('click', () => {
+                    if (sharedDataStage !== 'raw') {
+                        loadSharedDataList('raw', { force: true }).then(() => {
+                            sharedDataViewTab = 'duplicate';
+                            renderSharedDataList();
+                        }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        return;
+                    }
+                    sharedDataViewTab = 'duplicate';
+                    renderSharedDataList();
+                });
+            }
+            if (dataMgmtTabDamaged) {
+                dataMgmtTabDamaged.addEventListener('click', () => {
+                    if (sharedDataStage !== 'raw') {
+                        loadSharedDataList('raw', { force: true }).then(() => {
+                            sharedDataViewTab = 'damaged';
+                            renderSharedDataList();
+                        }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        return;
+                    }
+                    sharedDataViewTab = 'damaged';
+                    renderSharedDataList();
+                });
+            }
+            if (dataMgmtTabCleaned) {
+                dataMgmtTabCleaned.addEventListener('click', () => {
+                    if (sharedDataStage !== 'cleaned') {
+                        loadSharedDataList('cleaned', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        return;
+                    }
+                    sharedDataViewTab = 'cleaned';
+                    renderSharedDataList();
+                });
+            }
             if (dataMgmtDropzone && dataMgmtFileInput) {
                 dataMgmtDropzone.addEventListener('dragover', (e) => {
                     e.preventDefault();
