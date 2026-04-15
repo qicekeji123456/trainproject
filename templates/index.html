@@ -3883,6 +3883,70 @@
             font-size: 10px;
         }
 
+        .data-mgmt-upload-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .data-mgmt-upload-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 12px;
+            border-radius: 14px;
+            border: 1px dashed rgba(111, 124, 138, 0.22);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+                rgba(255, 255, 255, 0.01);
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+        }
+
+        .data-mgmt-upload-option:hover {
+            border-color: rgba(0, 122, 204, 0.5);
+            background:
+                linear-gradient(180deg, rgba(0, 122, 204, 0.08), rgba(255, 255, 255, 0.02)),
+                rgba(255, 255, 255, 0.02);
+            transform: translateY(-1px);
+        }
+
+        .data-mgmt-upload-option.disabled {
+            opacity: 0.58;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none;
+        }
+
+        .data-mgmt-upload-option-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 122, 204, 0.12);
+            color: #dff1ff;
+            font-size: 16px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .data-mgmt-upload-option-title {
+            color: #eef3f8;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .data-mgmt-upload-option-text {
+            margin-top: 3px;
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
         #dataMgmtSidebarDropzone {
             margin-bottom: 0;
         }
@@ -8435,13 +8499,22 @@
                         </div>
                     </div>
                     <div class="data-mgmt-section-body">
-                        <div class="data-mgmt-dropzone compact" id="dataMgmtSidebarDropzone">
-                            <div class="data-mgmt-dropzone-inner">
-                                <div class="data-mgmt-dropzone-icon">↑</div>
-                                <div class="data-mgmt-dropzone-eyebrow">UPLOAD</div>
-                                <div class="data-mgmt-dropzone-title">上传图片</div>
-                                <div class="data-mgmt-dropzone-text">拖拽到此处，或点击选择文件。</div>
-                                <div class="data-mgmt-dropzone-tips">支持批量上传</div>
+                        <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
+                        <input type="file" id="dataMgmtZipInput" accept=".zip,application/zip" style="display:none;">
+                        <div class="data-mgmt-upload-options">
+                            <div class="data-mgmt-upload-option" id="dataMgmtSidebarDropzone">
+                                <div class="data-mgmt-upload-option-icon">IMG</div>
+                                <div>
+                                    <div class="data-mgmt-upload-option-title">图片 / 文件夹上传</div>
+                                    <div class="data-mgmt-upload-option-text">点击选择图片，或直接拖拽图片到这里。</div>
+                                </div>
+                            </div>
+                            <div class="data-mgmt-upload-option" id="dataMgmtSidebarZipUpload">
+                                <div class="data-mgmt-upload-option-icon">ZIP</div>
+                                <div>
+                                    <div class="data-mgmt-upload-option-title">ZIP 压缩包上传</div>
+                                    <div class="data-mgmt-upload-option-text">上传 ZIP 后自动解压并导入其中的图片。</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -10091,6 +10164,7 @@
                 const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
                 const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
+                const zipUploadEl = document.getElementById("dataMgmtSidebarZipUpload");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
                 const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
@@ -10106,6 +10180,7 @@
                 }
 
                 if (uploadDropzoneEl) uploadDropzoneEl.classList.toggle('disabled', disableStageActions);
+                if (zipUploadEl) zipUploadEl.classList.toggle('disabled', disableStageActions);
                 if (scanDamagedBtn) scanDamagedBtn.disabled = disableStageActions;
                 if (scanDuplicatesBtn) scanDuplicatesBtn.disabled = disableStageActions;
                 if (deleteBtn) deleteBtn.disabled = disableStageActions || selectedCount <= 0;
@@ -10373,6 +10448,32 @@
                 }
             }
 
+            async function uploadSharedDataZip(file) {
+                if (!file) return;
+                setSharedDataActionBusy(true);
+                try {
+                    const form = new FormData();
+                    form.append('stage', sharedDataStage);
+                    form.append('file', file);
+                    const resp = await fetch('/api/data-management/upload', { method: 'POST', body: form });
+                    const data = await resp.json().catch(() => ({}));
+                    if (!resp.ok) throw new Error(data?.error || `上传失败: ${file.name}`);
+                    clearSharedDataScanResults();
+                    const savedCount = Number(data?.saved_count || 0);
+                    const skippedCount = Number(data?.skipped_count || 0);
+                    showToast(
+                        skippedCount > 0
+                            ? `已导入 ${savedCount} 张图片，跳过 ${skippedCount} 个非图片文件`
+                            : `已导入 ${savedCount} 张图片`,
+                        skippedCount > 0 ? 'warning' : 'success',
+                        1800
+                    );
+                    await loadSharedDataList(sharedDataStage, { force: true });
+                } finally {
+                    setSharedDataActionBusy(false);
+                }
+            }
+
             async function publishSharedDataSelection() {
                 const filenames = getSelectedSharedDataFilenames();
                 if (!filenames.length) throw new Error('请先选择要发布的数据');
@@ -10594,7 +10695,9 @@
             const dataMgmtScanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
             const dataMgmtScanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
+            const dataMgmtZipInput = document.getElementById('dataMgmtZipInput');
             const dataMgmtDropzone = document.getElementById('dataMgmtSidebarDropzone') || document.getElementById('dataMgmtDropzone');
+            const dataMgmtZipUpload = document.getElementById('dataMgmtSidebarZipUpload');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
@@ -10700,12 +10803,33 @@
                     dataMgmtFileInput.click();
                 });
             }
+            if (dataMgmtZipUpload && dataMgmtZipInput) {
+                dataMgmtZipUpload.addEventListener('click', (e) => {
+                    if (dataMgmtZipUpload.classList.contains('disabled')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    dataMgmtZipInput.click();
+                });
+            }
             if (dataMgmtFileInput) {
                 dataMgmtFileInput.addEventListener('change', async (e) => {
                     try {
                         await uploadSharedDataFiles(e.target.files);
                     } catch (err) {
                         showToast(`上传到共享数据池失败: ${err?.message || err}`, 'error', 1800);
+                    } finally {
+                        e.target.value = '';
+                    }
+                });
+            }
+            if (dataMgmtZipInput) {
+                dataMgmtZipInput.addEventListener('change', async (e) => {
+                    try {
+                        const file = e.target?.files?.[0];
+                        await uploadSharedDataZip(file);
+                    } catch (err) {
+                        showToast(`上传 ZIP 失败: ${err?.message || err}`, 'error', 1800);
                     } finally {
                         e.target.value = '';
                     }
