@@ -3761,16 +3761,31 @@
         }
 
         .data-mgmt-layout {
-            display: block;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 18px;
             height: 100%;
             width: 100%;
         }
 
+        .data-mgmt-sidebar,
         .data-mgmt-main {
             min-height: 0;
             border-radius: 18px;
             border: 1px solid rgba(111, 124, 138, 0.16);
             overflow: hidden;
+        }
+
+        .data-mgmt-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%),
+                rgba(37, 37, 38, 0.98);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+            overflow-y: auto;
         }
 
         .data-mgmt-main {
@@ -3793,6 +3808,7 @@
         }
 
         #dataManagement .data-mgmt-main .data-mgmt-steps,
+        #dataManagement .data-mgmt-main #dataMgmtDropzone,
         #dataManagement #dataMgmtUploadBtn {
             display: none;
         }
@@ -3850,6 +3866,10 @@
 
         .data-mgmt-dropzone.compact .data-mgmt-dropzone-tips {
             margin-top: 12px;
+        }
+
+        #dataMgmtSidebarDropzone {
+            margin-bottom: 0;
         }
 
         .data-mgmt-dropzone:hover,
@@ -3930,6 +3950,44 @@
             border-radius: 18px;
             background: rgba(21, 25, 31, 0.56);
             overflow: hidden;
+        }
+
+        .data-mgmt-section {
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            border-radius: 16px;
+            background: rgba(19, 23, 29, 0.52);
+            overflow: hidden;
+        }
+
+        .data-mgmt-sidebar .data-mgmt-section {
+            border-radius: 14px;
+            background: rgba(17, 20, 25, 0.56);
+        }
+
+        .data-mgmt-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px 8px;
+        }
+
+        .data-mgmt-section-title {
+            color: #dce5ef;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+        }
+
+        .data-mgmt-section-subtitle {
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .data-mgmt-section-body {
+            padding: 0 14px 14px;
         }
 
         .data-mgmt-action-grid {
@@ -4507,6 +4565,14 @@
         }
 
         @media (max-width: 1180px) {
+            .data-mgmt-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .data-mgmt-sidebar {
+                max-height: none;
+            }
+
             .data-mgmt-steps {
                 grid-template-columns: 1fr;
             }
@@ -4549,8 +4615,15 @@
                 margin-left: 0;
             }
 
+            .data-mgmt-sidebar,
             .data-mgmt-main {
                 padding: 14px;
+            }
+
+            .data-mgmt-section-head,
+            .data-mgmt-section-body {
+                padding-left: 14px;
+                padding-right: 14px;
             }
         }
 
@@ -8330,6 +8403,46 @@
                 </div>
             </section>
 
+            <aside class="data-mgmt-sidebar">
+                <section class="data-mgmt-section">
+                    <div class="data-mgmt-section-head">
+                        <div>
+                            <div class="data-mgmt-section-title">数据上传</div>
+                            <div class="data-mgmt-section-subtitle">在这里批量上传原始图片，支持点击与拖拽。</div>
+                        </div>
+                    </div>
+                    <div class="data-mgmt-section-body">
+                        <div class="data-mgmt-dropzone compact" id="dataMgmtSidebarDropzone">
+                            <div class="data-mgmt-dropzone-inner">
+                                <div class="data-mgmt-dropzone-icon">↑</div>
+                                <div class="data-mgmt-dropzone-eyebrow">UPLOAD</div>
+                                <div class="data-mgmt-dropzone-title">上传数据</div>
+                                <div class="data-mgmt-dropzone-text">拖拽文件到这里，或点击上传。支持当前阶段的数据补充与批量导入。</div>
+                                <div class="data-mgmt-dropzone-tips">支持批量图片上传</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="data-mgmt-section">
+                    <div class="data-mgmt-section-head">
+                        <div>
+                            <div class="data-mgmt-section-title">清洗结果</div>
+                            <div class="data-mgmt-section-subtitle">扫描损坏图与重复图后，在这里集中查看结果。</div>
+                        </div>
+                        <div class="data-mgmt-panel-meta" id="dataMgmtScanSummary">未扫描</div>
+                    </div>
+                    <div class="data-mgmt-section-body">
+                        <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
+                            <div class="data-mgmt-empty">
+                                <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
+                            </div>
+                        </div>
+                        <div class="data-mgmt-side-note">清洗结果用于集中复核，左侧负责图像数据浏览与批量操作。</div>
+                    </div>
+                </section>
+            </aside>
+
         </div>
     </div>
     <div class="tab-content" id="augmentation">
@@ -9954,7 +10067,7 @@
                 const publishBtn = document.getElementById("dataMgmtPublishBtn");
                 const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
-                const uploadDropzoneEl = document.getElementById("dataMgmtDropzone");
+                const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
                 const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
@@ -10061,12 +10174,18 @@
             }
 
             function renderSharedDataScanResults() {
+                const summaryEl = document.getElementById('dataMgmtScanSummary');
                 const resultsEl = document.getElementById('dataMgmtScanResults');
                 if (!resultsEl) return;
 
                 const damagedCount = Number(sharedDataDamagedScan?.count || 0);
                 const duplicateGroupCount = Number(sharedDataDuplicateScan?.group_count || 0);
                 const duplicateCandidateCount = Number(sharedDataDuplicateScan?.candidate_delete_count || 0);
+
+                if (summaryEl) {
+                    if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = '未扫描';
+                    else summaryEl.textContent = `损坏 ${damagedCount} · 重复组 ${duplicateGroupCount} · 候选 ${duplicateCandidateCount}`;
+                }
 
                 const parts = [];
                 const summaryCards = (!sharedDataDamagedScan && !sharedDataDuplicateScan) ? '' : `
@@ -10452,7 +10571,7 @@
             const dataMgmtScanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
             const dataMgmtScanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
-            const dataMgmtDropzone = document.getElementById('dataMgmtDropzone');
+            const dataMgmtDropzone = document.getElementById('dataMgmtSidebarDropzone') || document.getElementById('dataMgmtDropzone');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
