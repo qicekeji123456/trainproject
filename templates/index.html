@@ -4032,6 +4032,36 @@
             flex-wrap: wrap;
         }
 
+        .data-mgmt-scan-summary-card {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .data-mgmt-scan-summary-item {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+                rgba(24, 29, 35, 0.72);
+        }
+
+        .data-mgmt-scan-summary-label {
+            color: #7f8c9d;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+
+        .data-mgmt-scan-summary-value {
+            margin-top: 6px;
+            color: #eef3f8;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
         .data-mgmt-scan-results {
             min-height: 0;
             max-height: 260px;
@@ -4039,6 +4069,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            padding-right: 4px;
         }
 
         @media (max-width: 1180px) {
@@ -4052,10 +4083,13 @@
         }
 
         .data-mgmt-scan-group {
-            padding: 10px 12px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 14px;
             border: 1px solid rgba(111, 124, 138, 0.16);
-            background: rgba(30, 35, 42, 0.56);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+                rgba(30, 35, 42, 0.68);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
         .data-mgmt-scan-group-title {
@@ -4072,8 +4106,51 @@
             line-height: 1.5;
         }
 
+        .data-mgmt-scan-group-meta {
+            margin-bottom: 8px;
+        }
+
+        .data-mgmt-scan-list {
+            display: grid;
+            gap: 6px;
+        }
+
+        .data-mgmt-scan-item {
+            padding: 7px 9px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(111, 124, 138, 0.1);
+        }
+
         .data-mgmt-scan-item.keep {
             color: #67d39a;
+        }
+
+        .data-mgmt-empty {
+            min-height: 168px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border-radius: 14px;
+            border: 1px dashed rgba(111, 124, 138, 0.2);
+            background:
+                radial-gradient(circle at top, rgba(0, 122, 204, 0.1), transparent 60%),
+                rgba(255, 255, 255, 0.02);
+            text-align: center;
+        }
+
+        .data-mgmt-empty-text {
+            max-width: 240px;
+            color: #9aa7b4;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 900px) {
+            .data-mgmt-scan-summary-card {
+                grid-template-columns: 1fr;
+            }
         }
 
         .fb-addressbar {
@@ -6940,6 +7017,20 @@
             border-color: #d8dee4 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-scan-summary-item {
+            background: #ffffff !important;
+            border-color: #d8dee4 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-scan-summary-label,
+        body[data-theme="light"] .data-mgmt-empty-text {
+            color: #66707b !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-scan-summary-value {
+            color: #1f2328 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-scan-group-title {
             color: #1f2328 !important;
         }
@@ -6951,6 +7042,13 @@
 
         body[data-theme="light"] .data-mgmt-scan-item.keep {
             color: #15803d !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-empty {
+            background:
+                radial-gradient(circle at top, rgba(0, 95, 184, 0.08), transparent 60%),
+                #f8fafc !important;
+            border-color: #d8dee4 !important;
         }
 
         body[data-theme="light"] .fb-addressbar {
@@ -7646,7 +7744,9 @@
                             <button class="path-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
                         </div>
                         <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
-                            <div class="no-annotations">先扫描损坏图或重复图</div>
+                            <div class="data-mgmt-empty">
+                                <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -9317,59 +9417,92 @@
             }
 
             function renderSharedDataScanResults() {
-                const summaryEl = document.getElementById('dataMgmtScanSummary');
-                const resultsEl = document.getElementById('dataMgmtScanResults');
-                const selectDamagedBtn = document.getElementById('dataMgmtSelectDamagedBtn');
-                const selectDuplicatesBtn = document.getElementById('dataMgmtSelectDuplicatesBtn');
+                const summaryEl = document.getElementById("dataMgmtScanSummary");
+                const resultsEl = document.getElementById("dataMgmtScanResults");
+                const selectDamagedBtn = document.getElementById("dataMgmtSelectDamagedBtn");
+                const selectDuplicatesBtn = document.getElementById("dataMgmtSelectDuplicatesBtn");
                 if (!resultsEl) return;
+
                 const damagedCount = Number(sharedDataDamagedScan?.count || 0);
                 const duplicateGroupCount = Number(sharedDataDuplicateScan?.group_count || 0);
                 const duplicateCandidateCount = Number(sharedDataDuplicateScan?.candidate_delete_count || 0);
+
                 if (summaryEl) {
-                    if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = '未扫描';
+                    if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = "未扫描";
                     else summaryEl.textContent = `损坏 ${damagedCount} · 重复组 ${duplicateGroupCount} · 候选 ${duplicateCandidateCount}`;
                 }
+
                 if (selectDamagedBtn) selectDamagedBtn.disabled = sharedDataBusy || sharedDataActionBusy || damagedCount <= 0;
                 if (selectDuplicatesBtn) selectDuplicatesBtn.disabled = sharedDataBusy || sharedDataActionBusy || duplicateCandidateCount <= 0;
+
                 const parts = [];
+                const summaryCards = (!sharedDataDamagedScan && !sharedDataDuplicateScan) ? "" : `
+                    <div class="data-mgmt-scan-summary-card">
+                        <div class="data-mgmt-scan-summary-item">
+                            <div class="data-mgmt-scan-summary-label">损坏图</div>
+                            <div class="data-mgmt-scan-summary-value">${damagedCount}</div>
+                        </div>
+                        <div class="data-mgmt-scan-summary-item">
+                            <div class="data-mgmt-scan-summary-label">重复组</div>
+                            <div class="data-mgmt-scan-summary-value">${duplicateGroupCount}</div>
+                        </div>
+                        <div class="data-mgmt-scan-summary-item">
+                            <div class="data-mgmt-scan-summary-label">候选删除</div>
+                            <div class="data-mgmt-scan-summary-value">${duplicateCandidateCount}</div>
+                        </div>
+                    </div>
+                `;
+
                 if (sharedDataDamagedScan) {
                     const items = Array.isArray(sharedDataDamagedScan?.items) ? sharedDataDamagedScan.items : [];
                     parts.push(`
                         <div class="data-mgmt-scan-group">
                             <div class="data-mgmt-scan-group-title">损坏图 / 无法解码 (${items.length})</div>
-                            <div class="data-mgmt-scan-group-meta">${items.length ? '这些图片建议直接删除或重新上传。' : '未发现损坏图。'}</div>
-                            ${items.slice(0, 20).map(item => `<div class="data-mgmt-scan-item">${escapeHtml(String(item?.filename || ''))} · ${escapeHtml(String(item?.reason || ''))}</div>`).join('')}
-                            ${items.length > 20 ? `<div class="data-mgmt-scan-item">... 另有 ${items.length - 20} 项</div>` : ''}
+                            <div class="data-mgmt-scan-group-meta">${items.length ? "这些图片建议直接删除或重新上传。" : "未发现损坏图。"}</div>
+                            <div class="data-mgmt-scan-list">
+                                ${items.slice(0, 20).map(item => `<div class="data-mgmt-scan-item">${escapeHtml(String(item?.filename || ""))} · ${escapeHtml(String(item?.reason || ""))}</div>`).join("")}
+                                ${items.length > 20 ? `<div class="data-mgmt-scan-item">... 另有 ${items.length - 20} 项</div>` : ""}
+                            </div>
                         </div>
                     `);
                 }
+
                 if (sharedDataDuplicateScan) {
                     const groups = Array.isArray(sharedDataDuplicateScan?.groups) ? sharedDataDuplicateScan.groups : [];
                     parts.push(`
                         <div class="data-mgmt-scan-group">
                             <div class="data-mgmt-scan-group-title">重复图候选 (${groups.length} 组)</div>
                             <div class="data-mgmt-scan-group-meta">算法：SHA1 完全重复 + dHash 近重复（阈值 ${Number(sharedDataDuplicateScan?.threshold || 0)}）</div>
-                            ${groups.slice(0, 12).map(group => {
-                                const items = Array.isArray(group?.items) ? group.items : [];
-                                const keep = String(group?.keep || '').trim();
-                                return `
-                                    <div class="data-mgmt-scan-item" style="margin-top:8px;">
-                                        <strong>${escapeHtml(String(group?.title || '重复候选'))}</strong>
-                                    </div>
-                                    ${items.map(item => {
-                                        const filename = String(item?.filename || '').trim();
-                                        const isKeep = filename === keep;
-                                        return `<div class="data-mgmt-scan-item${isKeep ? ' keep' : ''}">${isKeep ? '保留' : '候选删除'} · ${escapeHtml(filename)}</div>`;
-                                    }).join('')}
-                                `;
-                            }).join('')}
-                            ${groups.length > 12 ? `<div class="data-mgmt-scan-item">... 另有 ${groups.length - 12} 组</div>` : ''}
+                            <div class="data-mgmt-scan-list">
+                                ${groups.slice(0, 12).map(group => {
+                                    const items = Array.isArray(group?.items) ? group.items : [];
+                                    const keep = String(group?.keep || "").trim();
+                                    const title = String(group?.title || "重复候选").trim();
+                                    return `
+                                        <div class="data-mgmt-scan-item">
+                                            <strong>${escapeHtml(title)}</strong>
+                                            ${items.map(item => {
+                                                const filename = String(item?.filename || "").trim();
+                                                const isKeep = filename === keep;
+                                                return `<div class="data-mgmt-scan-item${isKeep ? " keep" : ""}" style="margin-top:6px;">${isKeep ? "保留" : "候选删除"} · ${escapeHtml(filename)}</div>`;
+                                            }).join("")}
+                                        </div>
+                                    `;
+                                }).join("")}
+                                ${groups.length > 12 ? `<div class="data-mgmt-scan-item">... 另有 ${groups.length - 12} 组</div>` : ""}
+                            </div>
                         </div>
                     `);
                 }
-                resultsEl.innerHTML = parts.length ? parts.join('') : '<div class="no-annotations">先扫描损坏图或重复图</div>';
-            }
 
+                resultsEl.innerHTML = parts.length
+                    ? `${summaryCards}${parts.join("")}`
+                    : `
+                        <div class="data-mgmt-empty">
+                            <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
+                        </div>
+                    `;
+            }
             async function scanSharedDataDamaged() {
                 const resp = await fetch(`/api/data-management/scan-damaged?stage=${encodeURIComponent(sharedDataStage)}&t=${Date.now()}`);
                 const data = await resp.json().catch(() => ({}));
