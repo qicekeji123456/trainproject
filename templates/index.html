@@ -4284,7 +4284,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            flex: 1 1 100%;
+            flex: 1 1 0;
+            min-width: 0;
+            order: 1;
         }
 
         .data-mgmt-tab-btn {
@@ -4339,6 +4341,11 @@
             box-shadow: none;
         }
 
+        .data-mgmt-toolbar > .image-filter-check {
+            order: 2;
+            margin-right: 2px;
+        }
+
         .data-mgmt-toolbar-meta {
             display: inline-flex;
             align-items: center;
@@ -4351,10 +4358,11 @@
             font-size: 12px;
             line-height: 1;
             white-space: nowrap;
+            order: 3;
         }
 
         .data-mgmt-search {
-            flex: 1 1 240px;
+            flex: 0 0 260px;
             min-width: 220px;
             display: flex;
             align-items: center;
@@ -4364,6 +4372,8 @@
             border-radius: 12px;
             border: 1px solid rgba(111, 124, 138, 0.14);
             background: rgba(17, 20, 25, 0.5);
+            margin-left: auto;
+            order: 4;
         }
 
         .data-mgmt-search-icon {
@@ -4592,12 +4602,23 @@
                 align-items: stretch;
             }
 
+            .data-mgmt-tabs,
+            .data-mgmt-search {
+                flex: 1 1 100%;
+            }
+
+            .data-mgmt-toolbar > .image-filter-check,
+            .data-mgmt-toolbar-meta {
+                order: initial;
+            }
+
             .data-mgmt-toolbar-meta {
                 justify-content: center;
             }
 
             .data-mgmt-search {
                 min-width: 100%;
+                margin-left: 0;
             }
 
             .data-mgmt-sidebar,
@@ -7546,6 +7567,11 @@
         body[data-theme="light"] .data-mgmt-toolbar,
         body[data-theme="light"] .data-mgmt-toolbar-meta {
             background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-search {
+            background: #ffffff !important;
             border-color: #e2e8f0 !important;
         }
 
