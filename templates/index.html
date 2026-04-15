@@ -8381,8 +8381,6 @@
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
@@ -10229,8 +10227,6 @@
             function renderSharedDataScanResults() {
                 const summaryEl = document.getElementById('dataMgmtScanSummary');
                 const resultsEl = document.getElementById('dataMgmtScanResults');
-                const selectDamagedBtn = document.getElementById('dataMgmtSelectDamagedBtn');
-                const selectDuplicatesBtn = document.getElementById('dataMgmtSelectDuplicatesBtn');
                 if (!resultsEl) return;
 
                 const damagedCount = Number(sharedDataDamagedScan?.count || 0);
@@ -10241,9 +10237,6 @@
                     if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = '未扫描';
                     else summaryEl.textContent = `损坏 ${damagedCount} · 重复组 ${duplicateGroupCount} · 候选 ${duplicateCandidateCount}`;
                 }
-
-                if (selectDamagedBtn) selectDamagedBtn.disabled = sharedDataBusy || sharedDataActionBusy || damagedCount <= 0;
-                if (selectDuplicatesBtn) selectDuplicatesBtn.disabled = sharedDataBusy || sharedDataActionBusy || duplicateCandidateCount <= 0;
 
                 const parts = [];
                 const summaryCards = (!sharedDataDamagedScan && !sharedDataDuplicateScan) ? '' : `
@@ -10632,8 +10625,6 @@
             const dataMgmtDeleteBtn = document.getElementById('dataMgmtDeleteBtn');
             const dataMgmtScanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
             const dataMgmtScanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
-            const dataMgmtSelectDamagedBtn = document.getElementById('dataMgmtSelectDamagedBtn');
-            const dataMgmtSelectDuplicatesBtn = document.getElementById('dataMgmtSelectDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
             const dataMgmtDropzone = document.getElementById('dataMgmtSidebarDropzone') || document.getElementById('dataMgmtDropzone');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
@@ -10673,8 +10664,6 @@
                     }
                 });
             }
-            if (dataMgmtSelectDamagedBtn) dataMgmtSelectDamagedBtn.addEventListener('click', () => selectSharedDataDamagedCandidates());
-            if (dataMgmtSelectDuplicatesBtn) dataMgmtSelectDuplicatesBtn.addEventListener('click', () => selectSharedDataDuplicateCandidates());
             if (dataMgmtTabRaw) dataMgmtTabRaw.addEventListener('click', () => { sharedDataViewTab = 'raw'; renderSharedDataList(); });
             if (dataMgmtTabDuplicate) dataMgmtTabDuplicate.addEventListener('click', () => { sharedDataViewTab = 'duplicate'; renderSharedDataList(); });
             if (dataMgmtTabDamaged) dataMgmtTabDamaged.addEventListener('click', () => { sharedDataViewTab = 'damaged'; renderSharedDataList(); });
