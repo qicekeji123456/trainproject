@@ -3795,24 +3795,38 @@
         }
 
         .data-mgmt-action-group {
-            padding: 12px;
-            border-radius: 14px;
+            padding: 14px;
+            border-radius: 16px;
             border: 1px solid rgba(111, 124, 138, 0.12);
-            background: rgba(255, 255, 255, 0.03);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+                rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
         }
 
         .data-mgmt-action-group-title {
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             color: #dfe7f2;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             letter-spacing: 0.02em;
         }
 
+        .data-mgmt-action-group-subtitle {
+            margin-bottom: 12px;
+            color: #8f9cab;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
         .data-mgmt-action-grid .action-btn {
             width: 100%;
-            min-height: 38px;
-            border-radius: 10px;
+            min-height: 42px;
+            border-radius: 12px;
+        }
+
+        .data-mgmt-action-grid .action-btn.danger {
+            box-shadow: inset 0 0 0 1px rgba(201, 60, 55, 0.12);
         }
 
         .data-mgmt-stage-row {
@@ -4079,6 +4093,25 @@
 
             .data-mgmt-sidebar {
                 max-height: none;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .data-mgmt-action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-mgmt-sidebar,
+            .data-mgmt-main {
+                padding: 14px;
+            }
+
+            .data-mgmt-section-head,
+            .data-mgmt-panel-head,
+            .data-mgmt-section-body,
+            .data-mgmt-panel-body {
+                padding-left: 14px;
+                padding-right: 14px;
             }
         }
 
@@ -7679,6 +7712,7 @@
                         <div class="data-mgmt-action-groups">
                             <div class="data-mgmt-action-group">
                                 <div class="data-mgmt-action-group-title">数据获取</div>
+                                <div class="data-mgmt-action-group-subtitle">上传原始图片或刷新当前数据列表。</div>
                                 <div class="data-mgmt-action-grid">
                                     <button class="action-btn" id="dataMgmtUploadBtn" type="button">上传图片</button>
                                     <button class="action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
@@ -7687,6 +7721,7 @@
 
                             <div class="data-mgmt-action-group">
                                 <div class="data-mgmt-action-group-title">数据清洗</div>
+                                <div class="data-mgmt-action-group-subtitle">集中扫描损坏图、重复图，并清理当前已选数据。</div>
                                 <div class="data-mgmt-action-grid">
                                     <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
                                     <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
@@ -7697,6 +7732,7 @@
 
                             <div class="data-mgmt-action-group">
                                 <div class="data-mgmt-action-group-title">数据分发</div>
+                                <div class="data-mgmt-action-group-subtitle">将清洗后的数据下发到目标识别或图像分割工作区。</div>
                                 <div class="data-mgmt-action-grid">
                                     <button class="action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
                                     <button class="action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
