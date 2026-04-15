@@ -9302,6 +9302,86 @@
                 });
             }
 
+            function renderSharedDataList() {
+                const listEl = document.getElementById('dataMgmtList');
+                const summaryEl = document.getElementById('dataMgmtSummaryText');
+                const searchEl = document.getElementById('dataMgmtSearchInput');
+                const selectAllEl = document.getElementById('dataMgmtSelectAll');
+                if (!listEl) return;
+
+                const keyword = String(searchEl?.value || '').trim().toLowerCase();
+                const visibleItems = (sharedDataItems || []).filter((item) => {
+                    const filename = String(item?.filename || '').trim().toLowerCase();
+                    return !keyword || filename.includes(keyword);
+                });
+
+                if (summaryEl) {
+                    const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || ''))).length;
+                    summaryEl.textContent = `${visibleItems.length} 项${selectedCount ? ` · 已选 ${selectedCount}` : ''}`;
+                }
+
+                if (selectAllEl) {
+                    const selectableCount = visibleItems.length;
+                    const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || ''))).length;
+                    selectAllEl.checked = selectableCount > 0 && selectedCount === selectableCount;
+                    selectAllEl.indeterminate = selectedCount > 0 && selectedCount < selectableCount;
+                }
+
+                if (!visibleItems.length) {
+                    listEl.innerHTML = `<div class="no-annotations">${keyword ? '当前筛选条件下没有数据' : '当前暂无可用数据'}</div>`;
+                    return;
+                }
+
+                listEl.innerHTML = '';
+                visibleItems.forEach((item) => {
+                    const filename = String(item?.filename || '').trim();
+                    const selected = sharedDataSelection.has(filename);
+                    const stageText = sharedDataStage === 'cleaned' ? '清洗后数据' : '原始数据';
+                    const thumbSrc = `/shared-data/${encodeURIComponent(sharedDataStage)}/${encodeURIComponent(filename)}?t=${encodeURIComponent(String(item?.revision || ''))}`;
+                    const card = document.createElement('div');
+                    card.className = `data-mgmt-card${selected ? ' selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="data-mgmt-card-header">
+                            <label class="image-filter-check" style="margin:0; align-items:flex-start;">
+                                <input type="checkbox" class="data-mgmt-check" data-filename="${escapeHtml(filename)}" ${selected ? 'checked' : ''}>
+                                <span class="data-mgmt-card-title-wrap">
+                                    <span class="data-mgmt-card-topline">
+                                        <span class="data-mgmt-card-name" title="${escapeHtml(filename)}">${escapeHtml(filename)}</span>
+                                    </span>
+                                    <span class="data-mgmt-card-badges">
+                                        <span class="data-mgmt-badge primary">${escapeHtml(stageText)}</span>
+                                        ${selected ? '<span class="data-mgmt-badge">已选中</span>' : ''}
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+                        <img class="data-mgmt-thumb" src="${thumbSrc}" alt="${escapeHtml(filename)}">
+                        <div class="data-mgmt-meta-grid">
+                            <div class="data-mgmt-meta-item">
+                                <div class="data-mgmt-meta-label">大小</div>
+                                <div class="data-mgmt-meta-value">${escapeHtml(formatSharedDataBytes(item?.size))}</div>
+                            </div>
+                            <div class="data-mgmt-meta-item">
+                                <div class="data-mgmt-meta-label">修改时间</div>
+                                <div class="data-mgmt-meta-value">${escapeHtml(formatSharedDataTime(item?.modified_at))}</div>
+                            </div>
+                        </div>
+                    `;
+                    listEl.appendChild(card);
+                });
+
+                listEl.querySelectorAll('.data-mgmt-check').forEach((inputEl) => {
+                    inputEl.addEventListener('change', (e) => {
+                        const filename = String(e.target?.dataset?.filename || '').trim();
+                        if (!filename) return;
+                        if (e.target.checked) sharedDataSelection.add(filename);
+                        else sharedDataSelection.delete(filename);
+                        renderSharedDataList();
+                        updateSharedDataStageUI();
+                    });
+                });
+            }
+
             function renderSharedDataScanResults() {
                 const summaryEl = document.getElementById('dataMgmtScanSummary');
                 const resultsEl = document.getElementById('dataMgmtScanResults');
