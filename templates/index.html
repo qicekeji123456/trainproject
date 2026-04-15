@@ -4284,7 +4284,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 14px;
+            flex: 1 1 100%;
         }
 
         .data-mgmt-tab-btn {
@@ -8364,13 +8364,13 @@
                             </div>
                         </div>
                         <div class="data-mgmt-preview-body">
-                            <div class="data-mgmt-tabs" id="dataMgmtTabs">
-                                <button class="data-mgmt-tab-btn active" id="dataMgmtTabRaw" type="button">原始图 <span class="data-mgmt-tab-count" id="dataMgmtTabRawCount">0</span></button>
-                                <button class="data-mgmt-tab-btn" id="dataMgmtTabDuplicate" type="button">重复图 <span class="data-mgmt-tab-count" id="dataMgmtTabDuplicateCount">0</span></button>
-                                <button class="data-mgmt-tab-btn" id="dataMgmtTabDamaged" type="button">损坏图 <span class="data-mgmt-tab-count" id="dataMgmtTabDamagedCount">0</span></button>
-                                <button class="data-mgmt-tab-btn" id="dataMgmtTabCleaned" type="button">清洗后数据 <span class="data-mgmt-tab-count" id="dataMgmtTabCleanedCount">0</span></button>
-                            </div>
                             <div class="data-mgmt-toolbar">
+                                <div class="data-mgmt-tabs" id="dataMgmtTabs">
+                                    <button class="data-mgmt-tab-btn active" id="dataMgmtTabRaw" type="button">原始图 <span class="data-mgmt-tab-count" id="dataMgmtTabRawCount">0</span></button>
+                                    <button class="data-mgmt-tab-btn" id="dataMgmtTabDuplicate" type="button">重复图 <span class="data-mgmt-tab-count" id="dataMgmtTabDuplicateCount">0</span></button>
+                                    <button class="data-mgmt-tab-btn" id="dataMgmtTabDamaged" type="button">损坏图 <span class="data-mgmt-tab-count" id="dataMgmtTabDamagedCount">0</span></button>
+                                    <button class="data-mgmt-tab-btn" id="dataMgmtTabCleaned" type="button">清洗后数据 <span class="data-mgmt-tab-count" id="dataMgmtTabCleanedCount">0</span></button>
+                                </div>
                                 <label class="image-filter-check" style="margin:0;">
                                     <input type="checkbox" id="dataMgmtSelectAll">
                                     <span>全选</span>
