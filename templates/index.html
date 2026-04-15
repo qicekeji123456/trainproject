@@ -8378,7 +8378,6 @@
                             </div>
                             <div class="data-mgmt-preview-actions">
                                 <label class="data-mgmt-preview-action-btn primary upload" for="dataMgmtFileInput" id="dataMgmtToolbarUploadBtn">上传数据</label>
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
@@ -10095,7 +10094,6 @@
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
                 const uploadBtn = document.getElementById("dataMgmtToolbarUploadBtn") || document.getElementById("dataMgmtUploadBtn");
                 const uploadDropzoneEl = document.getElementById("dataMgmtToolbarUploadBtn") || document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
-                const refreshBtn = document.getElementById("dataMgmtRefreshBtn");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
                 const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
@@ -10133,7 +10131,6 @@
 
                 if (uploadBtn) uploadBtn.disabled = disableStageActions;
                 if (uploadDropzoneEl) uploadDropzoneEl.classList.toggle('disabled', disableStageActions);
-                if (refreshBtn) refreshBtn.disabled = disableStageActions;
                 if (scanDamagedBtn) scanDamagedBtn.disabled = disableStageActions;
                 if (scanDuplicatesBtn) scanDuplicatesBtn.disabled = disableStageActions;
                 if (deleteBtn) deleteBtn.disabled = disableStageActions || selectedCount <= 0;
@@ -10617,7 +10614,6 @@
             const selfPasswordSaveBtn = document.getElementById('selfPasswordSaveBtn');
             const dataMgmtStageRawBtn = document.getElementById('dataMgmtStageRawBtn');
             const dataMgmtStageCleanedBtn = document.getElementById('dataMgmtStageCleanedBtn');
-            const dataMgmtRefreshBtn = document.getElementById('dataMgmtRefreshBtn');
             const dataMgmtUploadBtn = document.getElementById('dataMgmtToolbarUploadBtn') || document.getElementById('dataMgmtUploadBtn');
             const dataMgmtPublishBtn = document.getElementById('dataMgmtPublishBtn');
             const dataMgmtDistributeDetectBtn = document.getElementById('dataMgmtDistributeDetectBtn');
@@ -10645,7 +10641,6 @@
             renderSharedDataScanResults();
             if (dataMgmtStageRawBtn) dataMgmtStageRawBtn.addEventListener('click', () => loadSharedDataList('raw', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600)));
             if (dataMgmtStageCleanedBtn) dataMgmtStageCleanedBtn.addEventListener('click', () => loadSharedDataList('cleaned', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600)));
-            if (dataMgmtRefreshBtn) dataMgmtRefreshBtn.addEventListener('click', () => loadSharedDataList(sharedDataStage, { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600)));
             if (dataMgmtScanDamagedBtn) {
                 dataMgmtScanDamagedBtn.addEventListener('click', async () => {
                     try {
