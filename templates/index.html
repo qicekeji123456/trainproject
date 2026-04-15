@@ -3896,6 +3896,10 @@
             transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
         }
 
+        .data-mgmt-dropzone-inner {
+            max-width: 560px;
+        }
+
         .data-mgmt-dropzone:hover,
         .data-mgmt-dropzone.dragover {
             border-color: rgba(0, 122, 204, 0.5);
@@ -3918,8 +3922,17 @@
             font-weight: 700;
         }
 
-        .data-mgmt-dropzone-title {
+        .data-mgmt-dropzone-eyebrow {
             margin-top: 16px;
+            color: #7f8c9d;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .data-mgmt-dropzone-title {
+            margin-top: 8px;
             color: #eef3f8;
             font-size: 16px;
             font-weight: 700;
@@ -3932,6 +3945,21 @@
             color: #8f9cab;
             font-size: 12px;
             line-height: 1.7;
+        }
+
+        .data-mgmt-dropzone-tips {
+            margin-top: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1;
         }
 
         .data-mgmt-preview-card {
@@ -4007,6 +4035,57 @@
             background:
                 linear-gradient(180deg, rgba(0, 122, 204, 0.08), rgba(255, 255, 255, 0.015)),
                 rgba(255, 255, 255, 0.03);
+        }
+
+        .data-mgmt-action-grid.config-list {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .data-mgmt-action-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+            text-align: left;
+        }
+
+        .data-mgmt-action-option-marker {
+            width: 18px;
+            height: 18px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 122, 204, 0.14);
+            color: #dff1ff;
+            font-size: 11px;
+            line-height: 1;
+            flex: 0 0 auto;
+            margin-top: 1px;
+        }
+
+        .data-mgmt-action-option-text {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .data-mgmt-action-option-title {
+            color: #edf3f8;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .data-mgmt-action-option-desc {
+            margin-top: 4px;
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.5;
         }
 
         .data-mgmt-action-group-title {
@@ -7346,6 +7425,24 @@
             border-color: #bfdbfe !important;
         }
 
+        body[data-theme="light"] .data-mgmt-action-option {
+            background: #ffffff !important;
+            border-color: #d8dee4 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-action-option-title {
+            color: #1f2328 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-action-option-desc {
+            color: #66707b !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-action-option-marker {
+            background: #e8f2ff !important;
+            color: #005fb8 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-toolbar,
         body[data-theme="light"] .data-mgmt-toolbar-meta {
             background: #f8fafc !important;
@@ -8119,8 +8216,10 @@
                         <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
                         <div>
                             <div class="data-mgmt-dropzone-icon">↑</div>
+                            <div class="data-mgmt-dropzone-eyebrow">UPLOAD</div>
                             <div class="data-mgmt-dropzone-title">上传数据</div>
                             <div class="data-mgmt-dropzone-text">拖放文件到这里，或点击上传。支持当前阶段的数据补充、刷新和后续清洗流转。</div>
+                            <div class="data-mgmt-dropzone-tips">支持批量图片上传与阶段内补充</div>
                         </div>
                     </label>
 
@@ -8220,29 +8319,29 @@
                             <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据获取</div>
                                 <div class="data-mgmt-action-group-subtitle">上传原始图片或刷新当前数据列表。</div>
-                                <div class="data-mgmt-action-grid">
-                                    <button class="action-btn" id="dataMgmtUploadBtn" type="button">上传图片</button>
-                                    <button class="action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
+                                <div class="data-mgmt-action-grid config-list">
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtUploadBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">上传图片</span><span class="data-mgmt-action-option-desc">从本地追加上传当前阶段的数据文件。</span></span></button>
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtRefreshBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">刷新列表</span><span class="data-mgmt-action-option-desc">重新拉取当前阶段的数据预览和状态。</span></span></button>
                                 </div>
                             </div>
 
                             <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据清洗</div>
                                 <div class="data-mgmt-action-group-subtitle">集中扫描损坏图、重复图，并清理当前已选数据。</div>
-                                <div class="data-mgmt-action-grid">
-                                    <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
-                                    <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
-                                    <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
-                                    <button class="action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
+                                <div class="data-mgmt-action-grid config-list">
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtScanDamagedBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">扫描损坏图</span><span class="data-mgmt-action-option-desc">快速识别无法解码或异常损坏的图片。</span></span></button>
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtScanDuplicatesBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">扫描重复图</span><span class="data-mgmt-action-option-desc">识别完全重复和近似重复的图片候选。</span></span></button>
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtPublishBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">发布到清洗后数据</span><span class="data-mgmt-action-option-desc">将筛选通过的数据发布到下一阶段继续流转。</span></span></button>
+                                    <button class="action-btn danger data-mgmt-action-option" id="dataMgmtDeleteBtn" type="button"><span class="data-mgmt-action-option-marker">!</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">删除所选</span><span class="data-mgmt-action-option-desc">删除当前已选中的数据，适用于清理无效样本。</span></span></button>
                                 </div>
                             </div>
 
                             <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据分发</div>
                                 <div class="data-mgmt-action-group-subtitle">将清洗后的数据下发到目标识别或图像分割工作区。</div>
-                                <div class="data-mgmt-action-grid">
-                                    <button class="action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
-                                    <button class="action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
+                                <div class="data-mgmt-action-grid config-list">
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtDistributeDetectBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">分发到目标识别</span><span class="data-mgmt-action-option-desc">下发到目标识别任务工作区继续标注或训练。</span></span></button>
+                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtDistributeSegmentBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">分发到图像分割</span><span class="data-mgmt-action-option-desc">下发到图像分割任务工作区继续处理。</span></span></button>
                                 </div>
                             </div>
                         </div>
