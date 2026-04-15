@@ -3708,6 +3708,146 @@
             color: #dff1ff;
         }
 
+        .data-mgmt-layout {
+            display: grid;
+            grid-template-columns: 360px minmax(0, 1fr);
+            gap: 18px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .data-mgmt-sidebar,
+        .data-mgmt-main {
+            min-height: 0;
+            border-radius: 18px;
+            border: 1px solid rgba(111, 124, 138, 0.16);
+            overflow: hidden;
+        }
+
+        .data-mgmt-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 22%),
+                rgba(37, 37, 38, 0.98);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+            overflow-y: auto;
+        }
+
+        .data-mgmt-main {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px;
+            background:
+                radial-gradient(circle at top right, rgba(0, 122, 204, 0.08), transparent 22%),
+                rgba(30, 30, 30, 0.98);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+        }
+
+        .data-mgmt-section {
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            border-radius: 16px;
+            background: rgba(19, 23, 29, 0.52);
+            overflow: hidden;
+        }
+
+        .data-mgmt-sidebar .data-mgmt-section {
+            background: rgba(17, 20, 25, 0.56);
+        }
+
+        .data-mgmt-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px 10px;
+        }
+
+        .data-mgmt-section-title {
+            color: #f3f6fb;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .data-mgmt-section-subtitle {
+            color: #8f9cab;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .data-mgmt-section-body {
+            padding: 0 16px 16px;
+        }
+
+        .data-mgmt-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .data-mgmt-action-grid .action-btn {
+            width: 100%;
+            min-height: 38px;
+            border-radius: 10px;
+        }
+
+        .data-mgmt-stage-row {
+            display: grid;
+            gap: 12px;
+        }
+
+        .data-mgmt-panel-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            border-radius: 16px;
+            background: rgba(21, 25, 31, 0.58);
+            overflow: hidden;
+        }
+
+        .data-mgmt-panel-card.primary {
+            flex: 1;
+        }
+
+        .data-mgmt-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px 12px;
+            border-bottom: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-mgmt-panel-head-main {
+            min-width: 0;
+        }
+
+        .data-mgmt-panel-title {
+            color: #eef3f8;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .data-mgmt-panel-meta {
+            color: #8f9cab;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .data-mgmt-panel-body {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            padding: 14px 16px 16px;
+        }
+
         body[data-entry-mode="dataManagement"] #dataManagement {
             padding: 18px;
         }
@@ -3719,12 +3859,14 @@
         .data-mgmt-toolbar {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .data-mgmt-toolbar .training-input {
-            max-width: 260px;
+            max-width: 320px;
+            min-width: 220px;
         }
 
         .data-mgmt-list {
@@ -3746,6 +3888,14 @@
             border-radius: 14px;
             background: rgba(30, 35, 42, 0.72);
             border: 1px solid rgba(111, 124, 138, 0.16);
+            transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+        }
+
+        .data-mgmt-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 122, 204, 0.3);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+            background: rgba(33, 39, 47, 0.86);
         }
 
         .data-mgmt-card.selected {
@@ -3794,11 +3944,22 @@
         }
 
         .data-mgmt-scan-results {
+            min-height: 0;
             max-height: 260px;
             overflow: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        @media (max-width: 1180px) {
+            .data-mgmt-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .data-mgmt-sidebar {
+                max-height: none;
+            }
         }
 
         .data-mgmt-scan-group {
@@ -6592,6 +6753,41 @@
             color: #005fb8 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-sidebar,
+        body[data-theme="light"] .data-mgmt-main {
+            border-color: #d8dee4 !important;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+        }
+
+        body[data-theme="light"] .data-mgmt-sidebar {
+            background:
+                linear-gradient(180deg, rgba(0, 95, 184, 0.03), transparent 22%),
+                #ffffff !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-main {
+            background:
+                radial-gradient(circle at top right, rgba(0, 95, 184, 0.06), transparent 22%),
+                #f8fafc !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-section,
+        body[data-theme="light"] .data-mgmt-panel-card {
+            background: #ffffff !important;
+            border-color: #d8dee4 !important;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+        }
+
+        body[data-theme="light"] .data-mgmt-section-title,
+        body[data-theme="light"] .data-mgmt-panel-title {
+            color: #1f2328 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-section-subtitle,
+        body[data-theme="light"] .data-mgmt-panel-meta {
+            color: #66707b !important;
+        }
+
         body[data-theme="light"] .data-mgmt-card {
             background: #ffffff !important;
             border-color: #d8dee4 !important;
@@ -7225,87 +7421,96 @@
     </div>
 
     <div class="tab-content" id="dataManagement">
-        <div class="training-layout" style="height: 100%;">
-            <div class="training-left-panel">
-                <div class="training-group">
-                    <div class="training-group-title">数据管理：</div>
-                    <div class="training-row">
-                        <div class="training-label">当前视图：</div>
-                        <div class="data-mgmt-stage-switch">
-                            <button class="data-mgmt-stage-btn active" id="dataMgmtStageRawBtn" type="button">原始数据</button>
-                            <button class="data-mgmt-stage-btn" id="dataMgmtStageCleanedBtn" type="button">清洗后共享数据</button>
+        <div class="data-mgmt-layout" style="height: 100%;">
+            <aside class="data-mgmt-sidebar">
+                <section class="data-mgmt-section">
+                    <div class="data-mgmt-section-head">
+                        <div>
+                            <div class="data-mgmt-section-title">数据管理</div>
+                            <div class="data-mgmt-section-subtitle">切换当前数据阶段并查看阶段说明</div>
                         </div>
                     </div>
-                    <div class="training-row">
-                        <div class="training-label">说明：</div>
-                        <div class="sidebar-note" id="dataMgmtStageNote">原始共享数据池用于上传和初筛；确认可用后再发布到共享清洗池。</div>
+                    <div class="data-mgmt-section-body">
+                        <div class="data-mgmt-stage-row">
+                            <div class="training-row">
+                                <div class="training-label">当前视图：</div>
+                                <div class="data-mgmt-stage-switch">
+                                    <button class="data-mgmt-stage-btn active" id="dataMgmtStageRawBtn" type="button">原始数据</button>
+                                    <button class="data-mgmt-stage-btn" id="dataMgmtStageCleanedBtn" type="button">清洗后共享数据</button>
+                                </div>
+                            </div>
+                            <div class="training-row" style="margin-bottom:0;">
+                                <div class="training-label">说明：</div>
+                                <div class="sidebar-note" id="dataMgmtStageNote">原始共享数据池用于上传和初筛；确认可用后再发布到共享清洗池。</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="training-group">
-                    <div class="training-group-title">批量操作：</div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtUploadBtn" type="button">上传图片</button>
+                <section class="data-mgmt-section">
+                    <div class="data-mgmt-section-head">
+                        <div>
+                            <div class="data-mgmt-section-title">批量操作</div>
+                            <div class="data-mgmt-section-subtitle">上传、扫描、发布、分发和清理当前所选文件</div>
+                        </div>
                     </div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
-                    </div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
-                    </div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
-                    </div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到共享清洗池</button>
-                    </div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
-                    </div>
-                    <div class="training-row">
-                        <button class="action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
-                    </div>
-                    <div class="training-row">
-                        <button class="action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
-                    </div>
-                    <div class="training-row">
-                        <div class="sidebar-note" id="dataMgmtActionHint">清洗后的共享数据可以分别分发到目标识别或图像分割任务目录。</div>
+                    <div class="data-mgmt-section-body">
+                        <div class="data-mgmt-action-grid">
+                            <button class="action-btn" id="dataMgmtUploadBtn" type="button">上传图片</button>
+                            <button class="action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
+                            <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
+                            <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
+                            <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到共享清洗池</button>
+                            <button class="action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
+                            <button class="action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
+                            <button class="action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
+                        </div>
+                        <div class="sidebar-note" id="dataMgmtActionHint" style="margin-top:12px;">清洗后的共享数据可以分别分发到目标识别或图像分割任务目录。</div>
                     </div>
                     <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
-                </div>
-            </div>
+                </section>
+            </aside>
 
-            <div class="training-right-panel" style="display:flex; flex-direction:column; min-width:0;">
-                <div class="training-group" style="flex:1; min-height:0; display:flex; flex-direction:column;">
-                    <div class="training-group-title" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-                        <span id="dataMgmtPanelTitle">原始共享数据</span>
-                        <span class="sidebar-note" id="dataMgmtSummaryText">0 项</span>
+            <section class="data-mgmt-main">
+                <div class="data-mgmt-panel-card primary">
+                    <div class="data-mgmt-panel-head">
+                        <div class="data-mgmt-panel-head-main">
+                            <div class="data-mgmt-panel-title" id="dataMgmtPanelTitle">原始共享数据</div>
+                        </div>
+                        <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
                     </div>
-                    <div class="data-mgmt-toolbar">
-                        <label class="image-filter-check" style="margin:0;">
-                            <input type="checkbox" id="dataMgmtSelectAll">
-                            <span>全选</span>
-                        </label>
-                        <input class="training-input" id="dataMgmtSearchInput" type="text" placeholder="按文件名筛选...">
-                    </div>
-                    <div class="data-mgmt-list" id="dataMgmtList">
-                        <div class="no-annotations">当前数据池为空</div>
-                    </div>
-                </div>
-                <div class="training-group" style="margin-top: 12px;">
-                    <div class="training-group-title" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-                        <span>清洗结果</span>
-                        <span class="sidebar-note" id="dataMgmtScanSummary">未扫描</span>
-                    </div>
-                    <div class="data-mgmt-scan-actions">
-                        <button class="path-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
-                        <button class="path-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
-                    </div>
-                    <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
-                        <div class="no-annotations">先扫描损坏图或重复图</div>
+                    <div class="data-mgmt-panel-body">
+                        <div class="data-mgmt-toolbar">
+                            <label class="image-filter-check" style="margin:0;">
+                                <input type="checkbox" id="dataMgmtSelectAll">
+                                <span>全选</span>
+                            </label>
+                            <input class="training-input" id="dataMgmtSearchInput" type="text" placeholder="按文件名筛选...">
+                        </div>
+                        <div class="data-mgmt-list" id="dataMgmtList">
+                            <div class="no-annotations">当前数据池为空</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <div class="data-mgmt-panel-card">
+                    <div class="data-mgmt-panel-head">
+                        <div class="data-mgmt-panel-head-main">
+                            <div class="data-mgmt-panel-title">清洗结果</div>
+                        </div>
+                        <div class="data-mgmt-panel-meta" id="dataMgmtScanSummary">未扫描</div>
+                    </div>
+                    <div class="data-mgmt-panel-body">
+                        <div class="data-mgmt-scan-actions">
+                            <button class="path-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
+                            <button class="path-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
+                        </div>
+                        <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
+                            <div class="no-annotations">先扫描损坏图或重复图</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 
