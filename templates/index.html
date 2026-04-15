@@ -3947,6 +3947,31 @@
             line-height: 1.5;
         }
 
+        .data-mgmt-upload-option-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .data-mgmt-upload-option-btn {
+            border: 1px solid rgba(111, 124, 138, 0.18);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #dce5ef;
+            font-size: 11px;
+            line-height: 1;
+            padding: 7px 12px;
+            cursor: pointer;
+            transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+        }
+
+        .data-mgmt-upload-option-btn:hover {
+            border-color: rgba(0, 122, 204, 0.28);
+            background: rgba(0, 122, 204, 0.12);
+            transform: translateY(-1px);
+        }
+
         #dataMgmtSidebarDropzone {
             margin-bottom: 0;
         }
@@ -7729,6 +7754,17 @@
             color: #66707b !important;
         }
 
+        body[data-theme="light"] .data-mgmt-upload-option-btn {
+            border-color: #d8dee4 !important;
+            background: #ffffff !important;
+            color: #304155 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-upload-option-btn:hover {
+            border-color: #bfdbfe !important;
+            background: #e8f2ff !important;
+        }
+
         body[data-theme="light"] .data-mgmt-card {
             background: #ffffff !important;
             border-color: #d8dee4 !important;
@@ -8500,13 +8536,18 @@
                     </div>
                     <div class="data-mgmt-section-body">
                         <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
+                        <input type="file" id="dataMgmtFolderInput" accept="image/*" multiple webkitdirectory directory style="display:none;">
                         <input type="file" id="dataMgmtZipInput" accept=".zip,application/zip" style="display:none;">
                         <div class="data-mgmt-upload-options">
                             <div class="data-mgmt-upload-option" id="dataMgmtSidebarDropzone">
                                 <div class="data-mgmt-upload-option-icon">IMG</div>
                                 <div>
                                     <div class="data-mgmt-upload-option-title">图片 / 文件夹上传</div>
-                                    <div class="data-mgmt-upload-option-text">点击选择图片，或直接拖拽图片到这里。</div>
+                                    <div class="data-mgmt-upload-option-text">选择单张图片、多张图片或整个文件夹，也支持直接拖拽图片到这里。</div>
+                                    <div class="data-mgmt-upload-option-actions">
+                                        <button class="data-mgmt-upload-option-btn" id="dataMgmtChooseImagesBtn" type="button">选择图片</button>
+                                        <button class="data-mgmt-upload-option-btn" id="dataMgmtChooseFolderBtn" type="button">选择文件夹</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="data-mgmt-upload-option" id="dataMgmtSidebarZipUpload">
@@ -10426,7 +10467,12 @@
             }
 
             async function uploadSharedDataFiles(files) {
-                const list = Array.from(files || []).filter(Boolean);
+                const list = Array.from(files || []).filter((file) => {
+                    if (!file) return false;
+                    const type = String(file.type || '').toLowerCase();
+                    const name = String(file.name || '').toLowerCase();
+                    return type.startsWith('image/') || /\.(jpg|jpeg|png|bmp|webp)$/i.test(name);
+                });
                 if (!list.length) return;
                 setSharedDataActionBusy(true);
                 let successCount = 0;
@@ -10695,8 +10741,11 @@
             const dataMgmtScanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
             const dataMgmtScanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
+            const dataMgmtFolderInput = document.getElementById('dataMgmtFolderInput');
             const dataMgmtZipInput = document.getElementById('dataMgmtZipInput');
             const dataMgmtDropzone = document.getElementById('dataMgmtSidebarDropzone') || document.getElementById('dataMgmtDropzone');
+            const dataMgmtChooseImagesBtn = document.getElementById('dataMgmtChooseImagesBtn');
+            const dataMgmtChooseFolderBtn = document.getElementById('dataMgmtChooseFolderBtn');
             const dataMgmtZipUpload = document.getElementById('dataMgmtSidebarZipUpload');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
@@ -10796,11 +10845,30 @@
             }
             if (dataMgmtDropzone && dataMgmtFileInput) {
                 dataMgmtDropzone.addEventListener('click', (e) => {
+                    if (e.target instanceof HTMLElement && e.target.closest('.data-mgmt-upload-option-btn')) {
+                        return;
+                    }
                     if (dataMgmtDropzone.classList.contains('disabled')) {
                         e.preventDefault();
                         return;
                     }
                     dataMgmtFileInput.click();
+                });
+            }
+            if (dataMgmtChooseImagesBtn && dataMgmtFileInput) {
+                dataMgmtChooseImagesBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (dataMgmtDropzone?.classList.contains('disabled')) return;
+                    dataMgmtFileInput.click();
+                });
+            }
+            if (dataMgmtChooseFolderBtn && dataMgmtFolderInput) {
+                dataMgmtChooseFolderBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (dataMgmtDropzone?.classList.contains('disabled')) return;
+                    dataMgmtFolderInput.click();
                 });
             }
             if (dataMgmtZipUpload && dataMgmtZipInput) {
@@ -10818,6 +10886,17 @@
                         await uploadSharedDataFiles(e.target.files);
                     } catch (err) {
                         showToast(`上传到共享数据池失败: ${err?.message || err}`, 'error', 1800);
+                    } finally {
+                        e.target.value = '';
+                    }
+                });
+            }
+            if (dataMgmtFolderInput) {
+                dataMgmtFolderInput.addEventListener('change', async (e) => {
+                    try {
+                        await uploadSharedDataFiles(e.target.files);
+                    } catch (err) {
+                        showToast(`上传到数据管理失败: ${err?.message || err}`, 'error', 1800);
                     } finally {
                         e.target.value = '';
                     }
