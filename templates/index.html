@@ -3789,6 +3789,26 @@
             gap: 10px;
         }
 
+        .data-mgmt-action-groups {
+            display: grid;
+            gap: 14px;
+        }
+
+        .data-mgmt-action-group {
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .data-mgmt-action-group-title {
+            margin-bottom: 10px;
+            color: #dfe7f2;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
         .data-mgmt-action-grid .action-btn {
             width: 100%;
             min-height: 38px;
@@ -6783,6 +6803,15 @@
             color: #1f2328 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-action-group {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-action-group-title {
+            color: #334155 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-section-subtitle,
         body[data-theme="light"] .data-mgmt-panel-meta {
             color: #66707b !important;
@@ -7455,15 +7484,32 @@
                         </div>
                     </div>
                     <div class="data-mgmt-section-body">
-                        <div class="data-mgmt-action-grid">
-                            <button class="action-btn" id="dataMgmtUploadBtn" type="button">上传图片</button>
-                            <button class="action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
-                            <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
-                            <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
-                            <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到共享清洗池</button>
-                            <button class="action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
-                            <button class="action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
-                            <button class="action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
+                        <div class="data-mgmt-action-groups">
+                            <div class="data-mgmt-action-group">
+                                <div class="data-mgmt-action-group-title">数据获取</div>
+                                <div class="data-mgmt-action-grid">
+                                    <button class="action-btn" id="dataMgmtUploadBtn" type="button">上传图片</button>
+                                    <button class="action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
+                                </div>
+                            </div>
+
+                            <div class="data-mgmt-action-group">
+                                <div class="data-mgmt-action-group-title">数据清洗</div>
+                                <div class="data-mgmt-action-grid">
+                                    <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
+                                    <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
+                                    <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到共享清洗池</button>
+                                    <button class="action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
+                                </div>
+                            </div>
+
+                            <div class="data-mgmt-action-group">
+                                <div class="data-mgmt-action-group-title">数据分发</div>
+                                <div class="data-mgmt-action-grid">
+                                    <button class="action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
+                                    <button class="action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="sidebar-note" id="dataMgmtActionHint" style="margin-top:12px;">清洗后的共享数据可以分别分发到目标识别或图像分割任务目录。</div>
                     </div>
