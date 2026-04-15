@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YOLOv11 任务选择</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #1e1e1e;
+      --panel: #2f2d36;
+      --panel-strong: #403f48;
+      --line: #4b4653;
+      --line-soft: #404040;
+      --text: #f3f5f8;
+      --muted: #aeb8c5;
+      --muted-soft: #8f98a4;
+      --accent: #007acc;
+      --accent-hover: #1290eb;
+      --warn: #f6c945;
+      --err: #f07d7d;
+      --ok: #57c084;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(0, 122, 204, 0.14), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(246, 201, 69, 0.1), transparent 24%),
+        linear-gradient(180deg, #24242a 0%, #1b1b1f 100%);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 18px 0 20px;
+      background: #2d2d2d;
+      border-bottom: 1px solid var(--line-soft);
+      flex: none;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, var(--warn) 0%, #d5a61e 100%);
+      color: #2a2a2a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+      flex: none;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      margin-top: 2px;
+      color: var(--muted-soft);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex: none;
+    }
+
+    .user-chip,
+    .logout-btn {
+      height: 58px;
+      border: none;
+      border-left: 1px solid var(--line-soft);
+      background: transparent;
+      color: var(--text);
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .user-chip {
+      color: var(--muted);
+      cursor: default;
+    }
+
+    .logout-btn {
+      cursor: pointer;
+      color: #f1f4f8;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: #3a3a3a;
+      color: #fff;
+    }
+
+    .user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--warn) 0%, #d5a61e 100%);
+      color: #2a2a2a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex: none;
+    }
+
+    .page {
+      flex: 1;
+      min-height: 0;
+      padding: 28px 22px 24px;
+      overflow: auto;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 360px);
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .task-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    .hero-main {
+      padding: 24px 24px 22px;
+      background:
+        linear-gradient(140deg, rgba(0, 122, 204, 0.08), transparent 42%),
+        linear-gradient(320deg, rgba(246, 201, 69, 0.05), transparent 34%),
+        var(--panel);
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(246, 201, 69, 0.22);
+      background: rgba(246, 201, 69, 0.08);
+      color: var(--warn);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      margin-top: 16px;
+      font-size: clamp(30px, 4vw, 42px);
+      line-height: 1.06;
+      letter-spacing: 0.01em;
+      color: #ffffff;
+    }
+
+    .hero-desc {
+      margin-top: 14px;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .hero-meta {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .meta-card {
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .meta-label {
+      color: var(--muted-soft);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .meta-value {
+      margin-top: 8px;
+      color: #edf2f7;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .hero-side {
+      display: flex;
+      flex-direction: column;
+      background: #26252c;
+    }
+
+    .hero-side-header {
+      padding: 18px 20px 14px;
+      background: var(--panel-strong);
+      border-bottom: 1px solid #514b57;
+    }
+
+    .hero-side-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f5f7fa;
+    }
+
+    .hero-side-subtitle {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .hero-side-body {
+      padding: 16px 20px 18px;
+      display: grid;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .hero-side-item {
+      padding: 14px 14px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .hero-side-item-title {
+      color: #eef3f8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero-side-item-text {
+      margin-top: 7px;
+      color: var(--muted-soft);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .task-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 320px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.025), transparent 34%),
+        var(--panel);
+    }
+
+    .task-card.active {
+      border-color: rgba(0, 122, 204, 0.5);
+      box-shadow:
+        0 0 0 1px rgba(0, 122, 204, 0.18),
+        0 22px 48px rgba(0, 0, 0, 0.26);
+    }
+
+    .task-card-head {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .task-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(246, 201, 69, 0.08);
+      border: 1px solid rgba(246, 201, 69, 0.2);
+      color: var(--warn);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .task-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0, 122, 204, 0.12);
+      color: #7ec7ff;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .task-card.active .task-state {
+      opacity: 1;
+    }
+
+    .task-body {
+      padding: 18px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.08;
+      color: #ffffff;
+    }
+
+    .task-desc {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task-list-item {
+      padding-left: 16px;
+      position: relative;
+      color: var(--muted-soft);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .task-list-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.12);
+    }
+
+    .task-action {
+      margin-top: auto;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #0c85db 0%, var(--accent) 100%);
+      color: #ffffff;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      box-shadow: 0 14px 26px rgba(0, 122, 204, 0.24);
+    }
+
+    .task-action:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .task-action:disabled {
+      cursor: wait;
+      opacity: 0.85;
+      transform: none;
+    }
+
+    .message-bar {
+      margin-top: 18px;
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message-bar.error {
+      color: var(--err);
+    }
+
+    .message-bar.ok {
+      color: var(--ok);
+    }
+
+    @media (max-width: 980px) {
+      body {
+        overflow: auto;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .task-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0 10px 0 12px;
+      }
+
+      .user-chip {
+        display: none;
+      }
+
+      .page {
+        padding: 16px 12px 18px;
+      }
+
+      .hero-main,
+      .hero-side,
+      .task-card {
+        border-radius: 14px;
+      }
+
+      .hero-main {
+        padding: 18px;
+      }
+
+      .hero-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-side-header,
+      .hero-side-body,
+      .task-card-head,
+      .task-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge">Y</div>
+      <div>
+        <div class="brand-title">YOLOv11 可视化训练工具</div>
+        <div class="brand-subtitle">选择任务后进入对应工作区主界面</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="user-chip">
+        <span class="user-avatar">{{ ((current_user or {}).get("username", "U")[:1] or "U").upper() }}</span>
+        <span>{{ (current_user or {}).get("username", "") }}</span>
+      </div>
+      <button id="logout" class="logout-btn" type="button">退出</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="shell">
+      <section class="hero">
+        <div class="hero-main">
+          <div class="hero-kicker">Task Workspace</div>
+          <div class="hero-title">选择本次进入的<br>任务工作区</div>
+          <div class="hero-desc">
+            系统会按账号和任务分别隔离工作目录。进入任务后，图像、标注、数据集、模型、训练记录和转换结果都会自动切换到对应上下文。
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-card">
+              <div class="meta-label">当前用户</div>
+              <div class="meta-value">{{ (current_user or {}).get("username", "") }}</div>
+            </div>
+            <div class="meta-card">
+              <div class="meta-label">当前任务</div>
+              <div class="meta-value">
+                {% if current_task == 'detect' %}
+                目标识别
+                {% elif current_task == 'segment' %}
+                图像分割
+                {% else %}
+                尚未选择
+                {% endif %}
+              </div>
+            </div>
+            <div class="meta-card">
+              <div class="meta-label">工作区根目录</div>
+              <div class="meta-value">{{ (current_user or {}).get("workspace_root", "") or (current_user or {}).get("workspace", "") }}</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-side">
+          <div class="hero-side-header">
+            <div class="hero-side-title">切换说明</div>
+            <div class="hero-side-subtitle">任务切换只影响当前会话上下文，不会删除已有数据。</div>
+          </div>
+          <div class="hero-side-body">
+            <div class="hero-side-item">
+              <div class="hero-side-item-title">目标识别</div>
+              <div class="hero-side-item-text">进入框标注、检测训练、验证、导出与部署流程。</div>
+            </div>
+            <div class="hero-side-item">
+              <div class="hero-side-item-title">图像分割</div>
+              <div class="hero-side-item-text">进入多边形/掩膜标注、分割训练和对应模型验证流程。</div>
+            </div>
+            <div class="hero-side-item">
+              <div class="hero-side-item-title">账号隔离</div>
+              <div class="hero-side-item-text">同一任务下也会按账号切换到各自工作区，避免互相覆盖。</div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="task-grid">
+        <article class="task-card {% if current_task == 'detect' %}active{% endif %}">
+          <div class="task-card-head">
+            <div class="task-tag">Detection</div>
+            <div class="task-state">当前任务</div>
+          </div>
+          <div class="task-body">
+            <div class="task-title">目标识别</div>
+            <div class="task-desc">适用于框标注、检测训练、评估和模型导出，保持与主界面一致的检测任务工作流。</div>
+            <div class="task-list">
+              <div class="task-list-item">进入当前账号的目标识别工作区。</div>
+              <div class="task-list-item">管理检测图像、标注结果、数据集和训练模型。</div>
+              <div class="task-list-item">继续使用验证、转换、部署和实时推理链路。</div>
+            </div>
+            <button class="task-action select" data-task="detect" type="button">进入目标识别</button>
+          </div>
+        </article>
+
+        <article class="task-card {% if current_task == 'segment' %}active{% endif %}">
+          <div class="task-card-head">
+            <div class="task-tag">Segmentation</div>
+            <div class="task-state">当前任务</div>
+          </div>
+          <div class="task-body">
+            <div class="task-title">图像分割</div>
+            <div class="task-desc">适用于多边形/掩膜标注、分割训练和对应模型验证，进入分割任务完整工作流。</div>
+            <div class="task-list">
+              <div class="task-list-item">进入当前账号的图像分割工作区。</div>
+              <div class="task-list-item">管理分割标注、训练数据集和模型结果目录。</div>
+              <div class="task-list-item">与主界面的训练、验证和导出能力保持一致。</div>
+            </div>
+            <button class="task-action select" data-task="segment" type="button">进入图像分割</button>
+          </div>
+        </article>
+
+        <article class="task-card">
+          <div class="task-card-head">
+            <div class="task-tag">Data Management</div>
+            <div class="task-state">共享入口</div>
+          </div>
+          <div class="task-body">
+            <div class="task-title">数据管理</div>
+            <div class="task-desc">进入数据管理入口，统一处理原始数据、清洗后共享数据、扫描、发布和分发。</div>
+            <div class="task-list">
+              <div class="task-list-item">查看共享原始数据与清洗后共享数据。</div>
+              <div class="task-list-item">执行损坏图、重复图扫描与批量删除。</div>
+              <div class="task-list-item">从共享清洗池分发到目标识别或图像分割工作区。</div>
+            </div>
+            <button class="task-action entry" data-entry="dataManagement" type="button">进入数据管理</button>
+          </div>
+        </article>
+      </section>
+
+      <div id="message" class="message-bar"></div>
+    </div>
+  </main>
+
+  <script>
+    const message = document.getElementById("message");
+
+    function setMessage(text, kind = "") {
+      message.textContent = text || "";
+      message.className = "message-bar" + (kind ? " " + kind : "");
+    }
+
+    function setButtonsBusy(busy) {
+      document.querySelectorAll(".task-action").forEach((btn) => {
+        btn.disabled = Boolean(busy);
+      });
+    }
+
+    document.querySelectorAll(".select").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const task = button.dataset.task;
+        setButtonsBusy(true);
+        setMessage("切换任务中...", "");
+        try {
+          const resp = await fetch("/api/auth/select-task", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ task })
+          });
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) {
+            setMessage(data.error || "切换失败", "error");
+            return;
+          }
+          setMessage("切换成功，正在进入主界面...", "ok");
+          window.location.href = data.next_url || "/";
+        } catch (error) {
+          setMessage("请求失败: " + error, "error");
+        } finally {
+          setButtonsBusy(false);
+        }
+      });
+    });
+
+    document.querySelectorAll(".entry").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const entry = String(button.dataset.entry || "").trim();
+        if (!entry) return;
+        setButtonsBusy(true);
+        setMessage("正在进入...", "");
+        try {
+          const resp = await fetch("/api/auth/me");
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok || !data?.authenticated) {
+            setMessage(data?.error || "登录状态无效，请重新登录", "error");
+            return;
+          }
+          const currentTask = String(data?.user?.current_task || "").trim().toLowerCase();
+          const task = currentTask === "segment" ? "segment" : "detect";
+          window.location.href = `/?entry=${encodeURIComponent(entry)}&task=${encodeURIComponent(task)}`;
+        } catch (error) {
+          setMessage("请求失败: " + error, "error");
+        } finally {
+          setButtonsBusy(false);
+        }
+      });
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await fetch("/api/auth/logout", { method: "POST" }).catch(() => null);
+      window.location.href = "/login";
+    });
+  </script>
+</body>
+</html>
