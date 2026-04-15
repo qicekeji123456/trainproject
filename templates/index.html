@@ -3801,84 +3801,16 @@
 
         .data-mgmt-workspace {
             display: grid;
-            grid-template-rows: auto auto minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr);
             gap: 14px;
             min-height: 0;
             flex: 1;
         }
 
-        .data-mgmt-steps {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .data-mgmt-step {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 16px;
-            border: 1px solid transparent;
-            background: transparent;
-        }
-
-        .data-mgmt-step.active {
-            border-color: rgba(0, 122, 204, 0.18);
-            background: rgba(0, 122, 204, 0.06);
-        }
-
-        .data-mgmt-step:not(:last-child)::after {
-            content: "";
-            position: absolute;
-            top: 24px;
-            left: calc(100% - 6px);
-            width: 24px;
-            height: 2px;
-            background: rgba(111, 124, 138, 0.22);
-            pointer-events: none;
-        }
-
-        .data-mgmt-step.active:not(:last-child)::after {
-            background: rgba(0, 122, 204, 0.42);
-        }
-
-        .data-mgmt-step-index {
-            width: 28px;
-            height: 28px;
-            border-radius: 999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.08);
-            color: #dce5ef;
-            font-size: 12px;
-            font-weight: 700;
-            flex: 0 0 auto;
-        }
-
-        .data-mgmt-step.active .data-mgmt-step-index {
-            background: #007acc;
-            color: #ffffff;
-        }
-
-        .data-mgmt-step-text {
-            min-width: 0;
-        }
-
-        .data-mgmt-step-title {
-            color: #eef3f8;
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .data-mgmt-step-desc {
-            margin-top: 4px;
-            color: #8f9cab;
-            font-size: 12px;
-            line-height: 1.5;
+        #dataManagement .data-mgmt-main .data-mgmt-steps,
+        #dataManagement .data-mgmt-main #dataMgmtDropzone,
+        #dataManagement #dataMgmtUploadBtn {
+            display: none;
         }
 
         .data-mgmt-dropzone {
@@ -3900,6 +3832,46 @@
             max-width: 560px;
         }
 
+        .data-mgmt-dropzone.compact {
+            min-height: 168px;
+            padding: 22px 18px;
+            border-radius: 16px;
+        }
+
+        .data-mgmt-dropzone.compact .data-mgmt-dropzone-inner {
+            max-width: 100%;
+        }
+
+        .data-mgmt-dropzone.compact .data-mgmt-dropzone-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            font-size: 20px;
+        }
+
+        .data-mgmt-dropzone.compact .data-mgmt-dropzone-eyebrow {
+            margin-top: 14px;
+        }
+
+        .data-mgmt-dropzone.compact .data-mgmt-dropzone-title {
+            margin-top: 6px;
+            font-size: 15px;
+        }
+
+        .data-mgmt-dropzone.compact .data-mgmt-dropzone-text {
+            margin-top: 8px;
+            max-width: none;
+            line-height: 1.6;
+        }
+
+        .data-mgmt-dropzone.compact .data-mgmt-dropzone-tips {
+            margin-top: 12px;
+        }
+
+        #dataMgmtSidebarDropzone {
+            margin-bottom: 12px;
+        }
+
         .data-mgmt-dropzone:hover,
         .data-mgmt-dropzone.dragover {
             border-color: rgba(0, 122, 204, 0.5);
@@ -3907,6 +3879,13 @@
                 linear-gradient(180deg, rgba(0, 122, 204, 0.08), rgba(255, 255, 255, 0.02)),
                 rgba(255, 255, 255, 0.02);
             transform: translateY(-1px);
+        }
+
+        .data-mgmt-dropzone.disabled {
+            opacity: 0.58;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none;
         }
 
         .data-mgmt-dropzone-icon {
@@ -8332,6 +8311,15 @@
                             <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据获取</div>
                                 <div class="data-mgmt-action-group-subtitle">上传原始图片或刷新当前数据列表。</div>
+                                <label class="data-mgmt-dropzone compact" id="dataMgmtSidebarDropzone" for="dataMgmtFileInput">
+                                    <div class="data-mgmt-dropzone-inner">
+                                        <div class="data-mgmt-dropzone-icon">鈫?/div>
+                                        <div class="data-mgmt-dropzone-eyebrow">UPLOAD</div>
+                                        <div class="data-mgmt-dropzone-title">涓婁紶鏁版嵁</div>
+                                        <div class="data-mgmt-dropzone-text">鎷栨斁鎴栫偣鍑婚€夋嫨鏂囦欢锛屽皢褰撳墠闃舵鐨勬暟鎹洿鎺ヨˉ鍏呭埌鍏变韩鏁版嵁涓€?/div>
+                                        <div class="data-mgmt-dropzone-tips">鏀寔鎵归噺鍥剧墖涓婁紶</div>
+                                    </div>
+                                </label>
                                 <div class="data-mgmt-action-grid config-list">
                                     <button class="action-btn data-mgmt-action-option" id="dataMgmtUploadBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">上传图片</span><span class="data-mgmt-action-option-desc">从本地追加上传当前阶段的数据文件。</span></span></button>
                                     <button class="action-btn data-mgmt-action-option" id="dataMgmtRefreshBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">刷新列表</span><span class="data-mgmt-action-option-desc">重新拉取当前阶段的数据预览和状态。</span></span></button>
@@ -9917,6 +9905,7 @@
                 const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
                 const uploadBtn = document.getElementById("dataMgmtUploadBtn");
+                const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
                 const refreshBtn = document.getElementById("dataMgmtRefreshBtn");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
@@ -9954,6 +9943,7 @@
                 }
 
                 if (uploadBtn) uploadBtn.disabled = disableStageActions;
+                if (uploadDropzoneEl) uploadDropzoneEl.classList.toggle('disabled', disableStageActions);
                 if (refreshBtn) refreshBtn.disabled = disableStageActions;
                 if (scanDamagedBtn) scanDamagedBtn.disabled = disableStageActions;
                 if (scanDuplicatesBtn) scanDuplicatesBtn.disabled = disableStageActions;
@@ -10448,7 +10438,7 @@
             const dataMgmtSelectDamagedBtn = document.getElementById('dataMgmtSelectDamagedBtn');
             const dataMgmtSelectDuplicatesBtn = document.getElementById('dataMgmtSelectDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
-            const dataMgmtDropzone = document.getElementById('dataMgmtDropzone');
+            const dataMgmtDropzone = document.getElementById('dataMgmtSidebarDropzone') || document.getElementById('dataMgmtDropzone');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
@@ -10500,9 +10490,17 @@
                     }
                 });
             }
+            if (dataMgmtDropzone && dataMgmtFileInput) {
+                dataMgmtDropzone.addEventListener('click', (e) => {
+                    if (dataMgmtDropzone.classList.contains('disabled')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    dataMgmtFileInput.click();
+                });
+            }
             if (dataMgmtUploadBtn && dataMgmtFileInput) {
                 dataMgmtUploadBtn.addEventListener('click', () => dataMgmtFileInput.click());
-                if (dataMgmtDropzone) dataMgmtDropzone.addEventListener('click', () => dataMgmtFileInput.click());
                 dataMgmtFileInput.addEventListener('change', async (e) => {
                     try {
                         await uploadSharedDataFiles(e.target.files);
