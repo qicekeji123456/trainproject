@@ -8377,7 +8377,6 @@
                                 <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
                             </div>
                             <div class="data-mgmt-preview-actions">
-                                <label class="data-mgmt-preview-action-btn primary upload" for="dataMgmtFileInput" id="dataMgmtToolbarUploadBtn">上传数据</label>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
@@ -10092,8 +10091,7 @@
                 const publishBtn = document.getElementById("dataMgmtPublishBtn");
                 const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
-                const uploadBtn = document.getElementById("dataMgmtToolbarUploadBtn") || document.getElementById("dataMgmtUploadBtn");
-                const uploadDropzoneEl = document.getElementById("dataMgmtToolbarUploadBtn") || document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
+                const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
                 const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
@@ -10129,7 +10127,6 @@
                     });
                 }
 
-                if (uploadBtn) uploadBtn.disabled = disableStageActions;
                 if (uploadDropzoneEl) uploadDropzoneEl.classList.toggle('disabled', disableStageActions);
                 if (scanDamagedBtn) scanDamagedBtn.disabled = disableStageActions;
                 if (scanDuplicatesBtn) scanDuplicatesBtn.disabled = disableStageActions;
@@ -10614,7 +10611,6 @@
             const selfPasswordSaveBtn = document.getElementById('selfPasswordSaveBtn');
             const dataMgmtStageRawBtn = document.getElementById('dataMgmtStageRawBtn');
             const dataMgmtStageCleanedBtn = document.getElementById('dataMgmtStageCleanedBtn');
-            const dataMgmtUploadBtn = document.getElementById('dataMgmtToolbarUploadBtn') || document.getElementById('dataMgmtUploadBtn');
             const dataMgmtPublishBtn = document.getElementById('dataMgmtPublishBtn');
             const dataMgmtDistributeDetectBtn = document.getElementById('dataMgmtDistributeDetectBtn');
             const dataMgmtDistributeSegmentBtn = document.getElementById('dataMgmtDistributeSegmentBtn');
@@ -10688,8 +10684,7 @@
                     dataMgmtFileInput.click();
                 });
             }
-            if (dataMgmtUploadBtn && dataMgmtFileInput) {
-                dataMgmtUploadBtn.addEventListener('click', () => dataMgmtFileInput.click());
+            if (dataMgmtFileInput) {
                 dataMgmtFileInput.addEventListener('change', async (e) => {
                     try {
                         await uploadSharedDataFiles(e.target.files);
