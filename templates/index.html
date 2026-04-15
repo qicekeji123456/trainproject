@@ -3814,20 +3814,34 @@
         }
 
         .data-mgmt-step {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 16px;
+            padding: 10px 12px;
             border-radius: 16px;
-            border: 1px solid rgba(111, 124, 138, 0.14);
-            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            background: transparent;
         }
 
         .data-mgmt-step.active {
-            border-color: rgba(0, 122, 204, 0.24);
-            background:
-                linear-gradient(180deg, rgba(0, 122, 204, 0.12), rgba(255, 255, 255, 0.02)),
-                rgba(255, 255, 255, 0.03);
+            border-color: rgba(0, 122, 204, 0.18);
+            background: rgba(0, 122, 204, 0.06);
+        }
+
+        .data-mgmt-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 24px;
+            left: calc(100% - 6px);
+            width: 24px;
+            height: 2px;
+            background: rgba(111, 124, 138, 0.22);
+            pointer-events: none;
+        }
+
+        .data-mgmt-step.active:not(:last-child)::after {
+            background: rgba(0, 122, 204, 0.42);
         }
 
         .data-mgmt-step-index {
@@ -3985,6 +3999,13 @@
                 linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
                 rgba(255, 255, 255, 0.03);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        }
+
+        .data-mgmt-action-group.config-like {
+            border-color: rgba(0, 122, 204, 0.16);
+            background:
+                linear-gradient(180deg, rgba(0, 122, 204, 0.08), rgba(255, 255, 255, 0.015)),
+                rgba(255, 255, 255, 0.03);
         }
 
         .data-mgmt-action-group-title {
@@ -4375,6 +4396,10 @@
 
             .data-mgmt-steps {
                 grid-template-columns: 1fr;
+            }
+
+            .data-mgmt-step:not(:last-child)::after {
+                display: none;
             }
         }
 
@@ -7297,9 +7322,22 @@
             border-color: #bfdbfe !important;
         }
 
+        body[data-theme="light"] .data-mgmt-step:not(:last-child)::after {
+            background: #d8dee4 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-step.active:not(:last-child)::after {
+            background: #93c5fd !important;
+        }
+
         body[data-theme="light"] .data-mgmt-dropzone-icon {
             background: #e8f2ff !important;
             color: #005fb8 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-action-group.config-like {
+            background: #eef6ff !important;
+            border-color: #bfdbfe !important;
         }
 
         body[data-theme="light"] .data-mgmt-toolbar,
@@ -8173,7 +8211,7 @@
                     </div>
                     <div class="data-mgmt-section-body">
                         <div class="data-mgmt-action-groups">
-                            <div class="data-mgmt-action-group">
+                            <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据获取</div>
                                 <div class="data-mgmt-action-group-subtitle">上传原始图片或刷新当前数据列表。</div>
                                 <div class="data-mgmt-action-grid">
@@ -8182,7 +8220,7 @@
                                 </div>
                             </div>
 
-                            <div class="data-mgmt-action-group">
+                            <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据清洗</div>
                                 <div class="data-mgmt-action-group-subtitle">集中扫描损坏图、重复图，并清理当前已选数据。</div>
                                 <div class="data-mgmt-action-grid">
@@ -8193,7 +8231,7 @@
                                 </div>
                             </div>
 
-                            <div class="data-mgmt-action-group">
+                            <div class="data-mgmt-action-group config-like">
                                 <div class="data-mgmt-action-group-title">数据分发</div>
                                 <div class="data-mgmt-action-group-subtitle">将清洗后的数据下发到目标识别或图像分割工作区。</div>
                                 <div class="data-mgmt-action-grid">
