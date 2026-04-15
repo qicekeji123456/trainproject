@@ -3762,7 +3762,7 @@
 
         .data-mgmt-layout {
             display: grid;
-            grid-template-columns: 360px minmax(0, 1fr);
+            grid-template-columns: minmax(0, 1fr) 340px;
             gap: 18px;
             height: 100%;
             width: 100%;
@@ -3797,6 +3797,137 @@
                 radial-gradient(circle at top right, rgba(0, 122, 204, 0.08), transparent 22%),
                 rgba(30, 30, 30, 0.98);
             box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+        }
+
+        .data-mgmt-workspace {
+            display: grid;
+            grid-template-rows: auto auto minmax(0, 1fr);
+            gap: 14px;
+            min-height: 0;
+            flex: 1;
+        }
+
+        .data-mgmt-steps {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .data-mgmt-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .data-mgmt-step.active {
+            border-color: rgba(0, 122, 204, 0.24);
+            background:
+                linear-gradient(180deg, rgba(0, 122, 204, 0.12), rgba(255, 255, 255, 0.02)),
+                rgba(255, 255, 255, 0.03);
+        }
+
+        .data-mgmt-step-index {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            color: #dce5ef;
+            font-size: 12px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .data-mgmt-step.active .data-mgmt-step-index {
+            background: #007acc;
+            color: #ffffff;
+        }
+
+        .data-mgmt-step-text {
+            min-width: 0;
+        }
+
+        .data-mgmt-step-title {
+            color: #eef3f8;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .data-mgmt-step-desc {
+            margin-top: 4px;
+            color: #8f9cab;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .data-mgmt-dropzone {
+            display: grid;
+            place-items: center;
+            min-height: 180px;
+            padding: 20px;
+            border-radius: 18px;
+            border: 1px dashed rgba(111, 124, 138, 0.28);
+            background:
+                radial-gradient(circle at top, rgba(0, 122, 204, 0.12), transparent 58%),
+                rgba(255, 255, 255, 0.02);
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+        }
+
+        .data-mgmt-dropzone:hover,
+        .data-mgmt-dropzone.dragover {
+            border-color: rgba(0, 122, 204, 0.5);
+            background:
+                radial-gradient(circle at top, rgba(0, 122, 204, 0.16), transparent 58%),
+                rgba(255, 255, 255, 0.035);
+            transform: translateY(-1px);
+        }
+
+        .data-mgmt-dropzone-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 122, 204, 0.16);
+            color: #dff1ff;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .data-mgmt-dropzone-title {
+            margin-top: 14px;
+            color: #eef3f8;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .data-mgmt-dropzone-text {
+            margin-top: 8px;
+            max-width: 520px;
+            color: #8f9cab;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .data-mgmt-preview-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            border-radius: 18px;
+            background: rgba(21, 25, 31, 0.56);
+            overflow: hidden;
         }
 
         .data-mgmt-section {
@@ -3932,6 +4063,53 @@
             flex-direction: column;
             min-height: 0;
             padding: 14px 16px 16px;
+        }
+
+        .data-mgmt-preview-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px 12px;
+            border-bottom: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-mgmt-preview-title {
+            color: #eef3f8;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .data-mgmt-preview-subtitle {
+            margin-top: 4px;
+            color: #8f9cab;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .data-mgmt-preview-body {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            padding: 14px 16px 16px;
+        }
+
+        .data-mgmt-side-stack {
+            display: grid;
+            gap: 14px;
+            min-height: 0;
+        }
+
+        .data-mgmt-side-note {
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+            color: #8f9cab;
+            font-size: 12px;
+            line-height: 1.7;
         }
 
         body[data-entry-mode="dataManagement"] #dataManagement {
@@ -4193,6 +4371,10 @@
 
             .data-mgmt-sidebar {
                 max-height: none;
+            }
+
+            .data-mgmt-steps {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -7084,6 +7266,42 @@
             color: #005fb8 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-step,
+        body[data-theme="light"] .data-mgmt-dropzone,
+        body[data-theme="light"] .data-mgmt-preview-card,
+        body[data-theme="light"] .data-mgmt-side-note {
+            background: #ffffff !important;
+            border-color: #d8dee4 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-step-title,
+        body[data-theme="light"] .data-mgmt-dropzone-title,
+        body[data-theme="light"] .data-mgmt-preview-title {
+            color: #1f2328 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-step-desc,
+        body[data-theme="light"] .data-mgmt-dropzone-text,
+        body[data-theme="light"] .data-mgmt-preview-subtitle,
+        body[data-theme="light"] .data-mgmt-side-note {
+            color: #66707b !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-step-index {
+            background: #eef2f6 !important;
+            color: #334155 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-step.active {
+            background: #eef6ff !important;
+            border-color: #bfdbfe !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-dropzone-icon {
+            background: #e8f2ff !important;
+            color: #005fb8 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-toolbar,
         body[data-theme="light"] .data-mgmt-toolbar-meta {
             background: #f8fafc !important;
@@ -7827,12 +8045,75 @@
 
     <div class="tab-content" id="dataManagement">
         <div class="data-mgmt-layout" style="height: 100%;">
+            <section class="data-mgmt-main">
+                <div class="data-mgmt-workspace">
+                    <div class="data-mgmt-steps">
+                        <div class="data-mgmt-step active">
+                            <div class="data-mgmt-step-index">1</div>
+                            <div class="data-mgmt-step-text">
+                                <div class="data-mgmt-step-title">上传原始数据</div>
+                                <div class="data-mgmt-step-desc">集中上传、查看和初筛当前阶段的数据。</div>
+                            </div>
+                        </div>
+                        <div class="data-mgmt-step">
+                            <div class="data-mgmt-step-index">2</div>
+                            <div class="data-mgmt-step-text">
+                                <div class="data-mgmt-step-title">清洗与复核</div>
+                                <div class="data-mgmt-step-desc">扫描损坏图、重复图，并确认清洗结果。</div>
+                            </div>
+                        </div>
+                        <div class="data-mgmt-step">
+                            <div class="data-mgmt-step-index">3</div>
+                            <div class="data-mgmt-step-text">
+                                <div class="data-mgmt-step-title">分发到任务</div>
+                                <div class="data-mgmt-step-desc">将清洗后的数据发送到目标识别或图像分割。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="data-mgmt-dropzone" id="dataMgmtDropzone">
+                        <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
+                        <div>
+                            <div class="data-mgmt-dropzone-icon">↑</div>
+                            <div class="data-mgmt-dropzone-title">上传数据</div>
+                            <div class="data-mgmt-dropzone-text">拖放文件到这里，或点击上传。支持当前阶段的数据补充、刷新和后续清洗流转。</div>
+                        </div>
+                    </label>
+
+                    <div class="data-mgmt-preview-card">
+                        <div class="data-mgmt-preview-head">
+                            <div>
+                                <div class="data-mgmt-preview-title" id="dataMgmtPanelTitle">原始数据</div>
+                                <div class="data-mgmt-preview-subtitle">上传后可在这里查看当前阶段的数据预览与筛选结果。</div>
+                            </div>
+                            <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
+                        </div>
+                        <div class="data-mgmt-preview-body">
+                            <div class="data-mgmt-toolbar">
+                                <label class="image-filter-check" style="margin:0;">
+                                    <input type="checkbox" id="dataMgmtSelectAll">
+                                    <span>全选</span>
+                                </label>
+                                <label class="data-mgmt-search">
+                                    <span class="data-mgmt-search-icon">搜索</span>
+                                    <input class="training-input" id="dataMgmtSearchInput" type="text" placeholder="按文件名筛选...">
+                                </label>
+                                <div class="data-mgmt-toolbar-meta" id="dataMgmtToolbarMeta">已选 0 项</div>
+                            </div>
+                            <div class="data-mgmt-list" id="dataMgmtList">
+                                <div class="no-annotations">当前暂无可用数据</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <aside class="data-mgmt-sidebar">
                 <section class="data-mgmt-section">
                     <div class="data-mgmt-section-head">
                         <div>
                             <div class="data-mgmt-section-title">数据管理</div>
-                            <div class="data-mgmt-section-subtitle">切换当前数据阶段并查看阶段说明</div>
+                            <div class="data-mgmt-section-subtitle">切换数据阶段并查看当前阶段的处理状态。</div>
                         </div>
                     </div>
                     <div class="data-mgmt-section-body">
@@ -7841,7 +8122,7 @@
                                 <div class="training-label">当前视图：</div>
                                 <div class="data-mgmt-stage-switch">
                                     <button class="data-mgmt-stage-btn active" id="dataMgmtStageRawBtn" type="button">原始数据</button>
-                                    <button class="data-mgmt-stage-btn" id="dataMgmtStageCleanedBtn" type="button">清洗后共享数据</button>
+                                    <button class="data-mgmt-stage-btn" id="dataMgmtStageCleanedBtn" type="button">清洗后数据</button>
                                 </div>
                             </div>
                             <div class="data-mgmt-stage-status">
@@ -7856,7 +8137,28 @@
                             </div>
                             <div class="training-row" style="margin-bottom:0;">
                                 <div class="training-label">说明：</div>
-                                <div class="sidebar-note" id="dataMgmtStageNote">原始共享数据池用于上传和初筛；确认可用后再发布到共享清洗池。</div>
+                                <div class="sidebar-note" id="dataMgmtStageNote">原始数据阶段用于上传、初筛和扫描，确认可用后再发布到清洗后数据。</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="data-mgmt-section">
+                    <div class="data-mgmt-section-head">
+                        <div>
+                            <div class="data-mgmt-section-title">清洗结果</div>
+                            <div class="data-mgmt-section-subtitle">扫描损坏图与重复图后，在这里集中查看结果。</div>
+                        </div>
+                        <div class="data-mgmt-panel-meta" id="dataMgmtScanSummary">未扫描</div>
+                    </div>
+                    <div class="data-mgmt-section-body">
+                        <div class="data-mgmt-scan-actions">
+                            <button class="path-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
+                            <button class="path-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
+                        </div>
+                        <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
+                            <div class="data-mgmt-empty">
+                                <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
                             </div>
                         </div>
                     </div>
@@ -7866,7 +8168,7 @@
                     <div class="data-mgmt-section-head">
                         <div>
                             <div class="data-mgmt-section-title">批量操作</div>
-                            <div class="data-mgmt-section-subtitle">上传、扫描、发布、分发和清理当前所选文件</div>
+                            <div class="data-mgmt-section-subtitle">上传、扫描、发布、分发和清理当前所选文件。</div>
                         </div>
                     </div>
                     <div class="data-mgmt-section-body">
@@ -7886,7 +8188,7 @@
                                 <div class="data-mgmt-action-grid">
                                     <button class="action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
                                     <button class="action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
-                                    <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到共享清洗池</button>
+                                    <button class="action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
                                     <button class="action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
                                 </div>
                             </div>
@@ -7900,61 +8202,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="sidebar-note" id="dataMgmtActionHint" style="margin-top:12px;">清洗后的共享数据可以分别分发到目标识别或图像分割任务目录。</div>
+                        <div class="data-mgmt-side-note" id="dataMgmtActionHint">先从原始数据中筛出可用样本，再发布到清洗后数据。</div>
                     </div>
-                    <input type="file" id="dataMgmtFileInput" accept="image/*" multiple style="display:none;">
                 </section>
             </aside>
-
-            <section class="data-mgmt-main">
-                <div class="data-mgmt-panel-card primary">
-                    <div class="data-mgmt-panel-head">
-                        <div class="data-mgmt-panel-head-main">
-                            <div class="data-mgmt-panel-title" id="dataMgmtPanelTitle">原始共享数据</div>
-                        </div>
-                        <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
-                    </div>
-                    <div class="data-mgmt-panel-body">
-                        <div class="data-mgmt-toolbar">
-                            <label class="image-filter-check" style="margin:0;">
-                                <input type="checkbox" id="dataMgmtSelectAll">
-                                <span>全选</span>
-                            </label>
-                            <label class="data-mgmt-search">
-                                <span class="data-mgmt-search-icon">搜索</span>
-                                <input class="training-input" id="dataMgmtSearchInput" type="text" placeholder="按文件名筛选...">
-                            </label>
-                            <div class="data-mgmt-toolbar-meta" id="dataMgmtToolbarMeta">已选 0 项</div>
-                        </div>
-                        <div class="data-mgmt-list" id="dataMgmtList">
-                            <div class="no-annotations">当前数据池为空</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="data-mgmt-panel-card">
-                    <div class="data-mgmt-panel-head">
-                        <div class="data-mgmt-panel-head-main">
-                            <div class="data-mgmt-panel-title">清洗结果</div>
-                        </div>
-                        <div class="data-mgmt-panel-meta" id="dataMgmtScanSummary">未扫描</div>
-                    </div>
-                    <div class="data-mgmt-panel-body">
-                        <div class="data-mgmt-scan-actions">
-                            <button class="path-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
-                            <button class="path-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
-                        </div>
-                        <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
-                            <div class="data-mgmt-empty">
-                                <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     </div>
-
     <div class="tab-content" id="augmentation">
         <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
             <div class="training-layout" style="flex: 1; min-height: 0;">
@@ -9537,6 +9790,12 @@
                 if (hintEl) hintEl.textContent = isCleaned
                     ? "当前可直接分发到目标识别或图像分割工作区。"
                     : "先从原始数据中筛出可用样本，再发布到清洗后数据。";
+                if (dataMgmtWorkflowSteps.length) {
+                    dataMgmtWorkflowSteps.forEach((step, idx) => {
+                        const active = isCleaned ? idx >= 1 : idx === 0;
+                        step.classList.toggle('active', active);
+                    });
+                }
 
                 if (uploadBtn) uploadBtn.disabled = disableStageActions;
                 if (refreshBtn) refreshBtn.disabled = disableStageActions;
@@ -10033,6 +10292,8 @@
             const dataMgmtSelectDamagedBtn = document.getElementById('dataMgmtSelectDamagedBtn');
             const dataMgmtSelectDuplicatesBtn = document.getElementById('dataMgmtSelectDuplicatesBtn');
             const dataMgmtFileInput = document.getElementById('dataMgmtFileInput');
+            const dataMgmtDropzone = document.getElementById('dataMgmtDropzone');
+            const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
 
@@ -10067,8 +10328,25 @@
             }
             if (dataMgmtSelectDamagedBtn) dataMgmtSelectDamagedBtn.addEventListener('click', () => selectSharedDataDamagedCandidates());
             if (dataMgmtSelectDuplicatesBtn) dataMgmtSelectDuplicatesBtn.addEventListener('click', () => selectSharedDataDuplicateCandidates());
+            if (dataMgmtDropzone && dataMgmtFileInput) {
+                dataMgmtDropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dataMgmtDropzone.classList.add('dragover');
+                });
+                dataMgmtDropzone.addEventListener('dragleave', () => dataMgmtDropzone.classList.remove('dragover'));
+                dataMgmtDropzone.addEventListener('drop', async (e) => {
+                    e.preventDefault();
+                    dataMgmtDropzone.classList.remove('dragover');
+                    try {
+                        await uploadSharedDataFiles(e.dataTransfer?.files || []);
+                    } catch (err) {
+                        showToast(`上传到共享数据池失败: ${err?.message || err}`, 'error', 1800);
+                    }
+                });
+            }
             if (dataMgmtUploadBtn && dataMgmtFileInput) {
                 dataMgmtUploadBtn.addEventListener('click', () => dataMgmtFileInput.click());
+                if (dataMgmtDropzone) dataMgmtDropzone.addEventListener('click', () => dataMgmtFileInput.click());
                 dataMgmtFileInput.addEventListener('change', async (e) => {
                     try {
                         await uploadSharedDataFiles(e.target.files);
