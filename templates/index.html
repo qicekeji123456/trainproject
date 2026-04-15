@@ -3983,12 +3983,20 @@
             background: rgba(17, 20, 25, 0.56);
         }
 
+        .data-mgmt-sidebar {
+            gap: 12px;
+        }
+
+        .data-mgmt-sidebar .data-mgmt-section {
+            border-radius: 14px;
+        }
+
         .data-mgmt-section-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            padding: 14px 16px 8px;
+            padding: 12px 14px 8px;
         }
 
         .data-mgmt-section-title {
@@ -4006,7 +4014,7 @@
         }
 
         .data-mgmt-section-body {
-            padding: 0 16px 16px;
+            padding: 0 14px 14px;
         }
 
         .data-mgmt-action-grid {
@@ -4291,6 +4299,11 @@
             gap: 12px;
             align-content: start;
             padding-right: 4px;
+        }
+
+        .data-mgmt-list .data-mgmt-empty {
+            grid-column: 1 / -1;
+            min-height: 220px;
         }
 
         .data-mgmt-card {
@@ -8244,7 +8257,7 @@
                                 <div class="data-mgmt-toolbar-meta" id="dataMgmtToolbarMeta">已选 0 项</div>
                             </div>
                             <div class="data-mgmt-list" id="dataMgmtList">
-                                <div class="no-annotations">当前暂无可用数据</div>
+                                <div class="data-mgmt-empty"><div class="data-mgmt-empty-text">上传文件后可在这里预览当前阶段的数据图片。</div></div>
                             </div>
                         </div>
                     </div>
@@ -9977,7 +9990,7 @@
                 }
 
                 if (!visibleItems.length) {
-                    listEl.innerHTML = `<div class="no-annotations">${keyword ? '当前筛选条件下没有数据' : '当前暂无可用数据'}</div>`;
+                    listEl.innerHTML = `<div class="data-mgmt-empty"><div class="data-mgmt-empty-text">${keyword ? '当前筛选条件下没有数据' : '上传文件后可在这里预览当前阶段的数据图片。'}</div></div>`;
                     return;
                 }
 
