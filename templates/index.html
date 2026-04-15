@@ -3972,6 +3972,35 @@
             transform: translateY(-1px);
         }
 
+        .data-mgmt-upload-status {
+            margin-top: 10px;
+            padding: 9px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .data-mgmt-upload-status.busy {
+            border-color: rgba(0, 122, 204, 0.22);
+            background: rgba(0, 122, 204, 0.08);
+            color: #dff1ff;
+        }
+
+        .data-mgmt-upload-status.success {
+            border-color: rgba(36, 161, 72, 0.2);
+            background: rgba(36, 161, 72, 0.08);
+            color: #dff7e7;
+        }
+
+        .data-mgmt-upload-status.warning {
+            border-color: rgba(245, 158, 11, 0.22);
+            background: rgba(245, 158, 11, 0.08);
+            color: #fde68a;
+        }
+
         #dataMgmtSidebarDropzone {
             margin-bottom: 0;
         }
@@ -7765,6 +7794,30 @@
             background: #e8f2ff !important;
         }
 
+        body[data-theme="light"] .data-mgmt-upload-status {
+            border-color: #e2e8f0 !important;
+            background: #f8fafc !important;
+            color: #66707b !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-upload-status.busy {
+            border-color: #bfdbfe !important;
+            background: #e8f2ff !important;
+            color: #005fb8 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-upload-status.success {
+            border-color: #bbf7d0 !important;
+            background: #f0fdf4 !important;
+            color: #166534 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-upload-status.warning {
+            border-color: #fde68a !important;
+            background: #fffbeb !important;
+            color: #b45309 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-card {
             background: #ffffff !important;
             border-color: #d8dee4 !important;
@@ -8558,6 +8611,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="data-mgmt-upload-status" id="dataMgmtUploadStatus">支持图片、多图、文件夹和 ZIP 压缩包上传。</div>
                     </div>
                 </section>
 
@@ -10190,12 +10244,19 @@
                     cleanedBtn.disabled = sharedDataStage !== 'cleaned';
                 }
             }
-
             function setSharedDataActionBusy(busy) {
                 sharedDataActionBusy = Boolean(busy);
                 updateSharedDataStageUI();
                 renderSharedDataList();
                 renderSharedDataScanResults();
+            }
+
+            function setSharedDataUploadStatus(message, tone = '') {
+                const statusEl = document.getElementById('dataMgmtUploadStatus');
+                if (!statusEl) return;
+                statusEl.textContent = String(message || '').trim() || '\u652f\u6301\u56fe\u7247\u3001\u591a\u56fe\u3001\u6587\u4ef6\u5939\u548c ZIP \u538b\u7f29\u5305\u4e0a\u4f20\u3002';
+                statusEl.classList.remove('busy', 'success', 'warning');
+                if (tone) statusEl.classList.add(tone);
             }
 
             function updateSharedDataStageUI() {
@@ -10206,13 +10267,15 @@
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
                 const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
                 const zipUploadEl = document.getElementById("dataMgmtSidebarZipUpload");
+                const chooseImagesBtn = document.getElementById("dataMgmtChooseImagesBtn");
+                const chooseFolderBtn = document.getElementById("dataMgmtChooseFolderBtn");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
                 const scanDuplicatesBtn = document.getElementById("dataMgmtScanDuplicatesBtn");
                 const selectedCount = getSelectedSharedDataFilenames().length;
                 const disableStageActions = sharedDataBusy || sharedDataActionBusy;
 
-                if (titleEl) titleEl.textContent = isCleaned ? "清洗后数据" : "原始数据";
+                if (titleEl) titleEl.textContent = isCleaned ? '\u6e05\u6d17\u540e\u6570\u636e' : '\u539f\u59cb\u6570\u636e';
                 if (dataMgmtWorkflowSteps.length) {
                     dataMgmtWorkflowSteps.forEach((step, idx) => {
                         const active = isCleaned ? idx >= 1 : idx === 0;
@@ -10222,6 +10285,8 @@
 
                 if (uploadDropzoneEl) uploadDropzoneEl.classList.toggle('disabled', disableStageActions);
                 if (zipUploadEl) zipUploadEl.classList.toggle('disabled', disableStageActions);
+                if (chooseImagesBtn) chooseImagesBtn.disabled = disableStageActions;
+                if (chooseFolderBtn) chooseFolderBtn.disabled = disableStageActions;
                 if (scanDamagedBtn) scanDamagedBtn.disabled = disableStageActions;
                 if (scanDuplicatesBtn) scanDuplicatesBtn.disabled = disableStageActions;
                 if (deleteBtn) deleteBtn.disabled = disableStageActions || selectedCount <= 0;
@@ -10473,8 +10538,12 @@
                     const name = String(file.name || '').toLowerCase();
                     return type.startsWith('image/') || /\.(jpg|jpeg|png|bmp|webp)$/i.test(name);
                 });
-                if (!list.length) return;
+                if (!list.length) {
+                    setSharedDataUploadStatus('\u672a\u68c0\u6d4b\u5230\u53ef\u4e0a\u4f20\u7684\u56fe\u7247\u6587\u4ef6\u3002', 'warning');
+                    return;
+                }
                 setSharedDataActionBusy(true);
+                setSharedDataUploadStatus(`\u6b63\u5728\u4e0a\u4f20 ${list.length} \u4e2a\u56fe\u7247\u6587\u4ef6...`, 'busy');
                 let successCount = 0;
                 try {
                     for (const file of list) {
@@ -10483,12 +10552,16 @@
                         form.append('file', file);
                         const resp = await fetch('/api/data-management/upload', { method: 'POST', body: form });
                         const data = await resp.json().catch(() => ({}));
-                        if (!resp.ok) throw new Error(data?.error || `上传失败: ${file.name}`);
+                        if (!resp.ok) throw new Error(data?.error || `\u4e0a\u4f20\u5931\u8d25: ${file.name}`);
                         successCount += 1;
                     }
                     clearSharedDataScanResults();
-                    showToast(`已上传 ${successCount} 张图片到${sharedDataStage === 'cleaned' ? '共享清洗池' : '原始数据池'}`, 'success', 1500);
+                    setSharedDataUploadStatus(`\u5df2\u5bfc\u5165 ${successCount} \u5f20\u56fe\u7247\u3002`, 'success');
+                    showToast(`\u5df2\u4e0a\u4f20 ${successCount} \u5f20\u56fe\u7247\u5230${sharedDataStage === 'cleaned' ? '\u5171\u4eab\u6e05\u6d17\u6c60' : '\u539f\u59cb\u6570\u636e\u6c60'}`, 'success', 1500);
                     await loadSharedDataList(sharedDataStage, { force: true });
+                } catch (error) {
+                    setSharedDataUploadStatus(`\u4e0a\u4f20\u5931\u8d25\uff1a${error?.message || error}`, 'warning');
+                    throw error;
                 } finally {
                     setSharedDataActionBusy(false);
                 }
@@ -10497,24 +10570,34 @@
             async function uploadSharedDataZip(file) {
                 if (!file) return;
                 setSharedDataActionBusy(true);
+                setSharedDataUploadStatus(`\u6b63\u5728\u5bfc\u5165 ZIP\uff1a${file.name}`, 'busy');
                 try {
                     const form = new FormData();
                     form.append('stage', sharedDataStage);
                     form.append('file', file);
                     const resp = await fetch('/api/data-management/upload', { method: 'POST', body: form });
                     const data = await resp.json().catch(() => ({}));
-                    if (!resp.ok) throw new Error(data?.error || `上传失败: ${file.name}`);
+                    if (!resp.ok) throw new Error(data?.error || `\u4e0a\u4f20\u5931\u8d25: ${file.name}`);
                     clearSharedDataScanResults();
                     const savedCount = Number(data?.saved_count || 0);
                     const skippedCount = Number(data?.skipped_count || 0);
+                    setSharedDataUploadStatus(
+                        skippedCount > 0
+                            ? `ZIP \u5bfc\u5165\u5b8c\u6210\uff1a${savedCount} \u5f20\u56fe\u7247\uff0c\u8df3\u8fc7 ${skippedCount} \u4e2a\u975e\u56fe\u7247\u6587\u4ef6\u3002`
+                            : `ZIP \u5bfc\u5165\u5b8c\u6210\uff1a${savedCount} \u5f20\u56fe\u7247\u3002`,
+                        skippedCount > 0 ? 'warning' : 'success'
+                    );
                     showToast(
                         skippedCount > 0
-                            ? `已导入 ${savedCount} 张图片，跳过 ${skippedCount} 个非图片文件`
-                            : `已导入 ${savedCount} 张图片`,
+                            ? `\u5df2\u5bfc\u5165 ${savedCount} \u5f20\u56fe\u7247\uff0c\u8df3\u8fc7 ${skippedCount} \u4e2a\u975e\u56fe\u7247\u6587\u4ef6`
+                            : `\u5df2\u5bfc\u5165 ${savedCount} \u5f20\u56fe\u7247`,
                         skippedCount > 0 ? 'warning' : 'success',
                         1800
                     );
                     await loadSharedDataList(sharedDataStage, { force: true });
+                } catch (error) {
+                    setSharedDataUploadStatus(`ZIP \u5bfc\u5165\u5931\u8d25\uff1a${error?.message || error}`, 'warning');
+                    throw error;
                 } finally {
                     setSharedDataActionBusy(false);
                 }
@@ -10522,7 +10605,7 @@
 
             async function publishSharedDataSelection() {
                 const filenames = getSelectedSharedDataFilenames();
-                if (!filenames.length) throw new Error('请先选择要发布的数据');
+                if (!filenames.length) throw new Error('\u8bf7\u5148\u9009\u62e9\u8981\u53d1\u5e03\u7684\u6570\u636e');
                 setSharedDataActionBusy(true);
                 try {
                     const resp = await fetch('/api/data-management/publish', {
@@ -10531,16 +10614,16 @@
                         body: JSON.stringify({ filenames })
                     });
                     const data = await resp.json().catch(() => ({}));
-                    if (!resp.ok) throw new Error(data?.error || '发布到共享清洗池失败');
+                    if (!resp.ok) throw new Error(data?.error || '\u53d1\u5e03\u5230\u5171\u4eab\u6e05\u6d17\u6c60\u5931\u8d25');
                     const copiedCount = Number(data?.copied_count || 0);
                     const skippedCount = Number(data?.skipped_count || 0);
                     if (copiedCount <= 0) {
-                        throw new Error(skippedCount > 0 ? '所选图片都未成功发布，请检查文件是否仍存在。' : '没有可发布的图片');
+                        throw new Error(skippedCount > 0 ? '\u6240\u9009\u56fe\u7247\u90fd\u672a\u6210\u529f\u53d1\u5e03\uff0c\u8bf7\u68c0\u67e5\u6587\u4ef6\u662f\u5426\u4ecd\u5b58\u5728\u3002' : '\u6ca1\u6709\u53ef\u53d1\u5e03\u7684\u56fe\u7247');
                     }
                     showToast(
                         skippedCount > 0
-                            ? `已发布 ${copiedCount} 张，跳过 ${skippedCount} 张`
-                            : `已发布 ${copiedCount} 张图片到共享清洗池`,
+                            ? `\u5df2\u53d1\u5e03 ${copiedCount} \u5f20\uff0c\u8df3\u8fc7 ${skippedCount} \u5f20`
+                            : `\u5df2\u53d1\u5e03 ${copiedCount} \u5f20\u56fe\u7247\u5230\u5171\u4eab\u6e05\u6d17\u6c60`,
                         skippedCount > 0 ? 'warning' : 'success',
                         1800
                     );
