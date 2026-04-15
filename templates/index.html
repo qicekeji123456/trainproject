@@ -3948,11 +3948,59 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 14px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .data-mgmt-toolbar .training-input {
-            max-width: 320px;
+            max-width: none;
+            min-width: 0;
+            width: 100%;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding: 0;
+            height: auto;
+        }
+
+        .data-mgmt-toolbar .training-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .data-mgmt-toolbar-meta {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(111, 124, 138, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+            color: #dfe7f2;
+            font-size: 12px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .data-mgmt-search {
+            flex: 1 1 240px;
             min-width: 220px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 0 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(17, 20, 25, 0.5);
+        }
+
+        .data-mgmt-search-icon {
+            color: #8f9cab;
+            font-size: 13px;
+            line-height: 1;
         }
 
         .data-mgmt-list {
@@ -4151,6 +4199,18 @@
         @media (max-width: 900px) {
             .data-mgmt-action-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .data-mgmt-toolbar {
+                align-items: stretch;
+            }
+
+            .data-mgmt-toolbar-meta {
+                justify-content: center;
+            }
+
+            .data-mgmt-search {
+                min-width: 100%;
             }
 
             .data-mgmt-sidebar,
@@ -7024,6 +7084,25 @@
             color: #005fb8 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-toolbar,
+        body[data-theme="light"] .data-mgmt-toolbar-meta {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-toolbar-meta {
+            color: #334155 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-search {
+            background: #ffffff !important;
+            border-color: #d8dee4 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-search-icon {
+            color: #64748b !important;
+        }
+
         body[data-theme="light"] .data-mgmt-sidebar,
         body[data-theme="light"] .data-mgmt-main {
             border-color: #d8dee4 !important;
@@ -7841,7 +7920,11 @@
                                 <input type="checkbox" id="dataMgmtSelectAll">
                                 <span>全选</span>
                             </label>
-                            <input class="training-input" id="dataMgmtSearchInput" type="text" placeholder="按文件名筛选...">
+                            <label class="data-mgmt-search">
+                                <span class="data-mgmt-search-icon">搜索</span>
+                                <input class="training-input" id="dataMgmtSearchInput" type="text" placeholder="按文件名筛选...">
+                            </label>
+                            <div class="data-mgmt-toolbar-meta" id="dataMgmtToolbarMeta">已选 0 项</div>
                         </div>
                         <div class="data-mgmt-list" id="dataMgmtList">
                             <div class="no-annotations">当前数据池为空</div>
@@ -9469,6 +9552,7 @@
                 const summaryEl = document.getElementById('dataMgmtSummaryText');
                 const searchEl = document.getElementById('dataMgmtSearchInput');
                 const selectAllEl = document.getElementById('dataMgmtSelectAll');
+                const toolbarMetaEl = document.getElementById('dataMgmtToolbarMeta');
                 if (!listEl) return;
 
                 const keyword = String(searchEl?.value || '').trim().toLowerCase();
@@ -9480,6 +9564,7 @@
                 if (summaryEl) {
                     const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || ''))).length;
                     summaryEl.textContent = `${visibleItems.length} 项${selectedCount ? ` · 已选 ${selectedCount}` : ''}`;
+                    if (toolbarMetaEl) toolbarMetaEl.textContent = `已选 ${selectedCount} 项`;
                 }
 
                 if (selectAllEl) {
