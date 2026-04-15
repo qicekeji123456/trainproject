@@ -4155,12 +4155,72 @@
 
         .data-mgmt-preview-head {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
             gap: 12px;
             padding: 14px 16px 12px;
             border-bottom: 1px solid rgba(111, 124, 138, 0.12);
             background: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-mgmt-preview-head-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .data-mgmt-preview-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .data-mgmt-preview-action-btn {
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(255, 255, 255, 0.04);
+            color: #e6edf5;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+        }
+
+        .data-mgmt-preview-action-btn:hover:not(:disabled) {
+            border-color: rgba(0, 122, 204, 0.32);
+            background: rgba(0, 122, 204, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .data-mgmt-preview-action-btn:disabled {
+            opacity: 0.56;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .data-mgmt-preview-action-btn.danger {
+            border-color: rgba(255, 109, 109, 0.18);
+            color: #ffd6d6;
+            background: rgba(255, 109, 109, 0.08);
+        }
+
+        .data-mgmt-preview-action-btn.primary {
+            border-color: rgba(0, 122, 204, 0.28);
+            background: rgba(0, 122, 204, 0.14);
+            color: #e5f4ff;
+        }
+
+        .data-mgmt-preview-action-btn.upload {
+            min-width: 120px;
         }
 
         .data-mgmt-preview-title {
@@ -4478,6 +4538,11 @@
         @media (max-width: 900px) {
             .data-mgmt-action-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .data-mgmt-preview-head-top {
+                align-items: flex-start;
+                flex-direction: column;
             }
 
             .data-mgmt-toolbar {
@@ -7445,6 +7510,24 @@
             color: #334155 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-preview-action-btn {
+            background: #f8fafc !important;
+            border-color: #d8e0ea !important;
+            color: #334155 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-preview-action-btn.primary {
+            background: #e8f2ff !important;
+            border-color: #bfdbfe !important;
+            color: #005fb8 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-preview-action-btn.danger {
+            background: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #b42318 !important;
+        }
+
         body[data-theme="light"] .data-mgmt-search {
             background: #ffffff !important;
             border-color: #d8dee4 !important;
@@ -8217,11 +8300,25 @@
 
                     <div class="data-mgmt-preview-card">
                         <div class="data-mgmt-preview-head">
-                            <div>
-                                <div class="data-mgmt-preview-title" id="dataMgmtPanelTitle">原始数据</div>
-                                <div class="data-mgmt-preview-subtitle">上传后可在这里查看当前阶段的数据预览与筛选结果。</div>
+                            <div class="data-mgmt-preview-head-top">
+                                <div>
+                                    <div class="data-mgmt-preview-title" id="dataMgmtPanelTitle">原始数据</div>
+                                    <div class="data-mgmt-preview-subtitle">上传后可在这里查看当前阶段的数据预览与筛选结果。</div>
+                                </div>
+                                <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
                             </div>
-                            <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
+                            <div class="data-mgmt-preview-actions">
+                                <label class="data-mgmt-preview-action-btn primary upload" for="dataMgmtFileInput" id="dataMgmtToolbarUploadBtn">上传数据</label>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtRefreshBtn" type="button">刷新列表</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
+                                <button class="data-mgmt-preview-action-btn danger" id="dataMgmtDeleteBtn" type="button">删除所选</button>
+                            </div>
                         </div>
                         <div class="data-mgmt-preview-body">
                             <div class="data-mgmt-toolbar">
@@ -8287,63 +8384,9 @@
                         <div class="data-mgmt-panel-meta" id="dataMgmtScanSummary">未扫描</div>
                     </div>
                     <div class="data-mgmt-section-body">
-                        <div class="data-mgmt-scan-actions">
-                            <button class="path-btn" id="dataMgmtSelectDamagedBtn" type="button">选中损坏图</button>
-                            <button class="path-btn" id="dataMgmtSelectDuplicatesBtn" type="button">选中重复候选</button>
-                        </div>
                         <div class="data-mgmt-scan-results" id="dataMgmtScanResults">
                             <div class="data-mgmt-empty">
                                 <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="data-mgmt-section">
-                    <div class="data-mgmt-section-head">
-                        <div>
-                            <div class="data-mgmt-section-title">批量操作</div>
-                            <div class="data-mgmt-section-subtitle">上传、扫描、发布、分发和清理当前所选文件。</div>
-                        </div>
-                    </div>
-                    <div class="data-mgmt-section-body">
-                        <div class="data-mgmt-action-groups">
-                            <div class="data-mgmt-action-group config-like">
-                                <div class="data-mgmt-action-group-title">数据获取</div>
-                                <div class="data-mgmt-action-group-subtitle">上传原始图片或刷新当前数据列表。</div>
-                                <label class="data-mgmt-dropzone compact" id="dataMgmtSidebarDropzone" for="dataMgmtFileInput">
-                                    <div class="data-mgmt-dropzone-inner">
-                                        <div class="data-mgmt-dropzone-icon">鈫?/div>
-                                        <div class="data-mgmt-dropzone-eyebrow">UPLOAD</div>
-                                        <div class="data-mgmt-dropzone-title">涓婁紶鏁版嵁</div>
-                                        <div class="data-mgmt-dropzone-text">鎷栨斁鎴栫偣鍑婚€夋嫨鏂囦欢锛屽皢褰撳墠闃舵鐨勬暟鎹洿鎺ヨˉ鍏呭埌鍏变韩鏁版嵁涓€?/div>
-                                        <div class="data-mgmt-dropzone-tips">鏀寔鎵归噺鍥剧墖涓婁紶</div>
-                                    </div>
-                                </label>
-                                <div class="data-mgmt-action-grid config-list">
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtUploadBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">上传图片</span><span class="data-mgmt-action-option-desc">从本地追加上传当前阶段的数据文件。</span></span></button>
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtRefreshBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">刷新列表</span><span class="data-mgmt-action-option-desc">重新拉取当前阶段的数据预览和状态。</span></span></button>
-                                </div>
-                            </div>
-
-                            <div class="data-mgmt-action-group config-like">
-                                <div class="data-mgmt-action-group-title">数据清洗</div>
-                                <div class="data-mgmt-action-group-subtitle">集中扫描损坏图、重复图，并清理当前已选数据。</div>
-                                <div class="data-mgmt-action-grid config-list">
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtScanDamagedBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">扫描损坏图</span><span class="data-mgmt-action-option-desc">快速识别无法解码或异常损坏的图片。</span></span></button>
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtScanDuplicatesBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">扫描重复图</span><span class="data-mgmt-action-option-desc">识别完全重复和近似重复的图片候选。</span></span></button>
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtPublishBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">发布到清洗后数据</span><span class="data-mgmt-action-option-desc">将筛选通过的数据发布到下一阶段继续流转。</span></span></button>
-                                    <button class="action-btn danger data-mgmt-action-option" id="dataMgmtDeleteBtn" type="button"><span class="data-mgmt-action-option-marker">!</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">删除所选</span><span class="data-mgmt-action-option-desc">删除当前已选中的数据，适用于清理无效样本。</span></span></button>
-                                </div>
-                            </div>
-
-                            <div class="data-mgmt-action-group config-like">
-                                <div class="data-mgmt-action-group-title">数据分发</div>
-                                <div class="data-mgmt-action-group-subtitle">将清洗后的数据下发到目标识别或图像分割工作区。</div>
-                                <div class="data-mgmt-action-grid config-list">
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtDistributeDetectBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">分发到目标识别</span><span class="data-mgmt-action-option-desc">下发到目标识别任务工作区继续标注或训练。</span></span></button>
-                                    <button class="action-btn data-mgmt-action-option" id="dataMgmtDistributeSegmentBtn" type="button"><span class="data-mgmt-action-option-marker">√</span><span class="data-mgmt-action-option-text"><span class="data-mgmt-action-option-title">分发到图像分割</span><span class="data-mgmt-action-option-desc">下发到图像分割任务工作区继续处理。</span></span></button>
-                                </div>
                             </div>
                         </div>
                         <div class="data-mgmt-side-note" id="dataMgmtActionHint">先从原始数据中筛出可用样本，再发布到清洗后数据。</div>
@@ -9904,8 +9947,8 @@
                 const publishBtn = document.getElementById("dataMgmtPublishBtn");
                 const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
                 const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
-                const uploadBtn = document.getElementById("dataMgmtUploadBtn");
-                const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
+                const uploadBtn = document.getElementById("dataMgmtToolbarUploadBtn") || document.getElementById("dataMgmtUploadBtn");
+                const uploadDropzoneEl = document.getElementById("dataMgmtToolbarUploadBtn") || document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
                 const refreshBtn = document.getElementById("dataMgmtRefreshBtn");
                 const deleteBtn = document.getElementById("dataMgmtDeleteBtn");
                 const scanDamagedBtn = document.getElementById("dataMgmtScanDamagedBtn");
@@ -10428,7 +10471,7 @@
             const dataMgmtStageRawBtn = document.getElementById('dataMgmtStageRawBtn');
             const dataMgmtStageCleanedBtn = document.getElementById('dataMgmtStageCleanedBtn');
             const dataMgmtRefreshBtn = document.getElementById('dataMgmtRefreshBtn');
-            const dataMgmtUploadBtn = document.getElementById('dataMgmtUploadBtn');
+            const dataMgmtUploadBtn = document.getElementById('dataMgmtToolbarUploadBtn') || document.getElementById('dataMgmtUploadBtn');
             const dataMgmtPublishBtn = document.getElementById('dataMgmtPublishBtn');
             const dataMgmtDistributeDetectBtn = document.getElementById('dataMgmtDistributeDetectBtn');
             const dataMgmtDistributeSegmentBtn = document.getElementById('dataMgmtDistributeSegmentBtn');
