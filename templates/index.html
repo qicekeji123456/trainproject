@@ -4280,6 +4280,49 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
+        .data-mgmt-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .data-mgmt-tab-btn {
+            min-height: 34px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+            color: #cfd8e3;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+        }
+
+        .data-mgmt-tab-btn.active {
+            border-color: rgba(0, 122, 204, 0.32);
+            background: rgba(0, 122, 204, 0.14);
+            color: #e8f4ff;
+        }
+
+        .data-mgmt-tab-count {
+            min-width: 18px;
+            height: 18px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: inherit;
+            font-size: 11px;
+            line-height: 18px;
+            text-align: center;
+        }
+
         .data-mgmt-toolbar .training-input {
             max-width: none;
             min-width: 0;
@@ -8321,6 +8364,12 @@
                             </div>
                         </div>
                         <div class="data-mgmt-preview-body">
+                            <div class="data-mgmt-tabs" id="dataMgmtTabs">
+                                <button class="data-mgmt-tab-btn active" id="dataMgmtTabRaw" type="button">原始图 <span class="data-mgmt-tab-count" id="dataMgmtTabRawCount">0</span></button>
+                                <button class="data-mgmt-tab-btn" id="dataMgmtTabDuplicate" type="button">重复图 <span class="data-mgmt-tab-count" id="dataMgmtTabDuplicateCount">0</span></button>
+                                <button class="data-mgmt-tab-btn" id="dataMgmtTabDamaged" type="button">损坏图 <span class="data-mgmt-tab-count" id="dataMgmtTabDamagedCount">0</span></button>
+                                <button class="data-mgmt-tab-btn" id="dataMgmtTabCleaned" type="button">清洗后数据 <span class="data-mgmt-tab-count" id="dataMgmtTabCleanedCount">0</span></button>
+                            </div>
                             <div class="data-mgmt-toolbar">
                                 <label class="image-filter-check" style="margin:0;">
                                     <input type="checkbox" id="dataMgmtSelectAll">
@@ -9846,6 +9895,7 @@
             let sharedDataDamagedScan = null;
             let sharedDataDuplicateScan = null;
             let sharedDataActionBusy = false;
+            let sharedDataViewTab = 'raw';
             const THEME_STORAGE_KEY = 'yolov11_ui_theme';
             let currentTheme = 'dark';
 
@@ -9929,6 +9979,78 @@
             function clearSharedDataScanResults() {
                 sharedDataDamagedScan = null;
                 sharedDataDuplicateScan = null;
+                if (sharedDataStage === 'cleaned') sharedDataViewTab = 'cleaned';
+                else sharedDataViewTab = 'raw';
+            }
+            function getSharedDataClassification() {
+                const damagedSet = new Set(
+                    (Array.isArray(sharedDataDamagedScan?.items) ? sharedDataDamagedScan.items : [])
+                        .map(item => String(item?.filename || '').trim())
+                        .filter(Boolean)
+                );
+                const duplicateSet = new Set(
+                    (Array.isArray(sharedDataDuplicateScan?.candidate_delete) ? sharedDataDuplicateScan.candidate_delete : [])
+                        .map(name => String(name || '').trim())
+                        .filter(Boolean)
+                );
+                return { damagedSet, duplicateSet };
+            }
+            function getSharedDataItemsForTab(tab, keyword = '') {
+                const normalizedKeyword = String(keyword || '').trim().toLowerCase();
+                const { damagedSet, duplicateSet } = getSharedDataClassification();
+                return (sharedDataItems || []).filter((item) => {
+                    const filename = String(item?.filename || '').trim();
+                    if (!filename) return false;
+                    const lower = filename.toLowerCase();
+                    if (normalizedKeyword && !lower.includes(normalizedKeyword)) return false;
+                    if (sharedDataStage === 'cleaned') return tab === 'cleaned';
+                    if (tab === 'damaged') return damagedSet.has(filename);
+                    if (tab === 'duplicate') return duplicateSet.has(filename);
+                    if (tab === 'cleaned') return false;
+                    return !damagedSet.has(filename) && !duplicateSet.has(filename);
+                });
+            }
+            function normalizeSharedDataViewTab(nextTab) {
+                if (sharedDataStage === 'cleaned') return 'cleaned';
+                if (nextTab === 'duplicate' || nextTab === 'damaged' || nextTab === 'raw') return nextTab;
+                return 'raw';
+            }
+            function renderSharedDataTabs() {
+                const rawCountEl = document.getElementById('dataMgmtTabRawCount');
+                const duplicateCountEl = document.getElementById('dataMgmtTabDuplicateCount');
+                const damagedCountEl = document.getElementById('dataMgmtTabDamagedCount');
+                const cleanedCountEl = document.getElementById('dataMgmtTabCleanedCount');
+                const rawBtn = document.getElementById('dataMgmtTabRaw');
+                const duplicateBtn = document.getElementById('dataMgmtTabDuplicate');
+                const damagedBtn = document.getElementById('dataMgmtTabDamaged');
+                const cleanedBtn = document.getElementById('dataMgmtTabCleaned');
+                const counts = {
+                    raw: getSharedDataItemsForTab('raw').length,
+                    duplicate: getSharedDataItemsForTab('duplicate').length,
+                    damaged: getSharedDataItemsForTab('damaged').length,
+                    cleaned: sharedDataStage === 'cleaned' ? (sharedDataItems || []).length : 0,
+                };
+                sharedDataViewTab = normalizeSharedDataViewTab(sharedDataViewTab);
+                if (rawCountEl) rawCountEl.textContent = String(counts.raw);
+                if (duplicateCountEl) duplicateCountEl.textContent = String(counts.duplicate);
+                if (damagedCountEl) damagedCountEl.textContent = String(counts.damaged);
+                if (cleanedCountEl) cleanedCountEl.textContent = String(counts.cleaned);
+                if (rawBtn) {
+                    rawBtn.classList.toggle('active', sharedDataViewTab === 'raw');
+                    rawBtn.disabled = sharedDataStage === 'cleaned';
+                }
+                if (duplicateBtn) {
+                    duplicateBtn.classList.toggle('active', sharedDataViewTab === 'duplicate');
+                    duplicateBtn.disabled = sharedDataStage === 'cleaned';
+                }
+                if (damagedBtn) {
+                    damagedBtn.classList.toggle('active', sharedDataViewTab === 'damaged');
+                    damagedBtn.disabled = sharedDataStage === 'cleaned';
+                }
+                if (cleanedBtn) {
+                    cleanedBtn.classList.toggle('active', sharedDataViewTab === 'cleaned');
+                    cleanedBtn.disabled = sharedDataStage !== 'cleaned';
+                }
             }
 
             function setSharedDataActionBusy(busy) {
@@ -10004,26 +10126,27 @@
                 if (!listEl) return;
 
                 const keyword = String(searchEl?.value || '').trim().toLowerCase();
-                const visibleItems = (sharedDataItems || []).filter((item) => {
-                    const filename = String(item?.filename || '').trim().toLowerCase();
-                    return !keyword || filename.includes(keyword);
-                });
+                const tabTitleMap = { raw: '原始图', duplicate: '重复图', damaged: '损坏图', cleaned: '清洗后数据' };
+                sharedDataViewTab = normalizeSharedDataViewTab(sharedDataViewTab);
+                renderSharedDataTabs();
+                const visibleItems = getSharedDataItemsForTab(sharedDataViewTab, keyword);
+                const currentTabTitle = tabTitleMap[sharedDataViewTab] || '图像数据';
 
                 if (summaryEl) {
-                    const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || ''))).length;
-                    summaryEl.textContent = `${visibleItems.length} 项${selectedCount ? ` · 已选 ${selectedCount}` : ''}`;
+                    const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || '').trim())).length;
+                    summaryEl.textContent = `${currentTabTitle} ${visibleItems.length} 项${selectedCount ? ` · 已选 ${selectedCount}` : ''}`;
                     if (toolbarMetaEl) toolbarMetaEl.textContent = `已选 ${selectedCount} 项`;
                 }
 
                 if (selectAllEl) {
                     const selectableCount = visibleItems.length;
-                    const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || ''))).length;
+                    const selectedCount = visibleItems.filter((item) => sharedDataSelection.has(String(item?.filename || '').trim())).length;
                     selectAllEl.checked = selectableCount > 0 && selectedCount === selectableCount;
                     selectAllEl.indeterminate = selectedCount > 0 && selectedCount < selectableCount;
                 }
 
                 if (!visibleItems.length) {
-                    listEl.innerHTML = `<div class="data-mgmt-empty"><div class="data-mgmt-empty-text">${keyword ? '当前筛选条件下没有数据' : '上传文件后可在这里预览当前阶段的数据图片。'}</div></div>`;
+                    listEl.innerHTML = `<div class="data-mgmt-empty"><div class="data-mgmt-empty-text">${keyword ? '当前筛选条件下没有数据' : `${currentTabTitle} 中暂无图片`}</div></div>`;
                     return;
                 }
 
@@ -10031,7 +10154,7 @@
                 visibleItems.forEach((item) => {
                     const filename = String(item?.filename || '').trim();
                     const selected = sharedDataSelection.has(filename);
-                    const stageText = sharedDataStage === 'cleaned' ? '清洗后数据' : '原始数据';
+                    const stageText = currentTabTitle;
                     const thumbSrc = `/shared-data/${encodeURIComponent(sharedDataStage)}/${encodeURIComponent(filename)}?t=${encodeURIComponent(String(item?.revision || ''))}`;
                     const card = document.createElement('div');
                     card.className = `data-mgmt-card${selected ? ' selected' : ''}`;
@@ -10078,10 +10201,10 @@
             }
 
             function renderSharedDataScanResults() {
-                const summaryEl = document.getElementById("dataMgmtScanSummary");
-                const resultsEl = document.getElementById("dataMgmtScanResults");
-                const selectDamagedBtn = document.getElementById("dataMgmtSelectDamagedBtn");
-                const selectDuplicatesBtn = document.getElementById("dataMgmtSelectDuplicatesBtn");
+                const summaryEl = document.getElementById('dataMgmtScanSummary');
+                const resultsEl = document.getElementById('dataMgmtScanResults');
+                const selectDamagedBtn = document.getElementById('dataMgmtSelectDamagedBtn');
+                const selectDuplicatesBtn = document.getElementById('dataMgmtSelectDuplicatesBtn');
                 if (!resultsEl) return;
 
                 const damagedCount = Number(sharedDataDamagedScan?.count || 0);
@@ -10089,7 +10212,7 @@
                 const duplicateCandidateCount = Number(sharedDataDuplicateScan?.candidate_delete_count || 0);
 
                 if (summaryEl) {
-                    if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = "未扫描";
+                    if (!sharedDataDamagedScan && !sharedDataDuplicateScan) summaryEl.textContent = '未扫描';
                     else summaryEl.textContent = `损坏 ${damagedCount} · 重复组 ${duplicateGroupCount} · 候选 ${duplicateCandidateCount}`;
                 }
 
@@ -10097,7 +10220,7 @@
                 if (selectDuplicatesBtn) selectDuplicatesBtn.disabled = sharedDataBusy || sharedDataActionBusy || duplicateCandidateCount <= 0;
 
                 const parts = [];
-                const summaryCards = (!sharedDataDamagedScan && !sharedDataDuplicateScan) ? "" : `
+                const summaryCards = (!sharedDataDamagedScan && !sharedDataDuplicateScan) ? '' : `
                     <div class="data-mgmt-scan-summary-card">
                         <div class="data-mgmt-scan-summary-item">
                             <div class="data-mgmt-scan-summary-label">损坏图</div>
@@ -10119,10 +10242,10 @@
                     parts.push(`
                         <div class="data-mgmt-scan-group">
                             <div class="data-mgmt-scan-group-title">损坏图 / 无法解码 (${items.length})</div>
-                            <div class="data-mgmt-scan-group-meta">${items.length ? "这些图片建议直接删除或重新上传。" : "未发现损坏图。"}</div>
+                            <div class="data-mgmt-scan-group-meta">${items.length ? '这些图片建议直接删除或重新上传。' : '未发现损坏图。'}</div>
                             <div class="data-mgmt-scan-list">
-                                ${items.slice(0, 20).map(item => `<div class="data-mgmt-scan-item">${escapeHtml(String(item?.filename || ""))} · ${escapeHtml(String(item?.reason || ""))}</div>`).join("")}
-                                ${items.length > 20 ? `<div class="data-mgmt-scan-item">... 另有 ${items.length - 20} 项</div>` : ""}
+                                ${items.slice(0, 20).map(item => `<div class="data-mgmt-scan-item">${escapeHtml(String(item?.filename || ''))} · ${escapeHtml(String(item?.reason || ''))}</div>`).join('')}
+                                ${items.length > 20 ? `<div class="data-mgmt-scan-item">... 另有 ${items.length - 20} 项</div>` : ''}
                             </div>
                         </div>
                     `);
@@ -10137,27 +10260,27 @@
                             <div class="data-mgmt-scan-list">
                                 ${groups.slice(0, 12).map(group => {
                                     const items = Array.isArray(group?.items) ? group.items : [];
-                                    const keep = String(group?.keep || "").trim();
-                                    const title = String(group?.title || "重复候选").trim();
+                                    const keep = String(group?.keep || '').trim();
+                                    const title = String(group?.title || '重复候选').trim();
                                     return `
                                         <div class="data-mgmt-scan-item">
                                             <strong>${escapeHtml(title)}</strong>
                                             ${items.map(item => {
-                                                const filename = String(item?.filename || "").trim();
+                                                const filename = String(item?.filename || '').trim();
                                                 const isKeep = filename === keep;
-                                                return `<div class="data-mgmt-scan-item${isKeep ? " keep" : ""}" style="margin-top:6px;">${isKeep ? "保留" : "候选删除"} · ${escapeHtml(filename)}</div>`;
-                                            }).join("")}
+                                                return `<div class="data-mgmt-scan-item${isKeep ? ' keep' : ''}" style="margin-top:6px;">${isKeep ? '保留' : '候选删除'} · ${escapeHtml(filename)}</div>`;
+                                            }).join('')}
                                         </div>
                                     `;
-                                }).join("")}
-                                ${groups.length > 12 ? `<div class="data-mgmt-scan-item">... 另有 ${groups.length - 12} 组</div>` : ""}
+                                }).join('')}
+                                ${groups.length > 12 ? `<div class="data-mgmt-scan-item">... 另有 ${groups.length - 12} 组</div>` : ''}
                             </div>
                         </div>
                     `);
                 }
 
                 resultsEl.innerHTML = parts.length
-                    ? `${summaryCards}${parts.join("")}`
+                    ? `${summaryCards}${parts.join('')}`
                     : `
                         <div class="data-mgmt-empty">
                             <div class="data-mgmt-empty-text">先执行损坏图或重复图扫描，结果会在这里集中展示。</div>
@@ -10169,6 +10292,8 @@
                 const data = await resp.json().catch(() => ({}));
                 if (!resp.ok) throw new Error(data?.error || '扫描损坏图失败');
                 sharedDataDamagedScan = data || null;
+                if (Number(data?.count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'damaged';
+                renderSharedDataList();
                 renderSharedDataScanResults();
                 showToast(`损坏图扫描完成：${Number(data?.count || 0)} 项`, 'info', 1500);
             }
@@ -10178,6 +10303,8 @@
                 const data = await resp.json().catch(() => ({}));
                 if (!resp.ok) throw new Error(data?.error || '扫描重复图失败');
                 sharedDataDuplicateScan = data || null;
+                if (Number(data?.candidate_delete_count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'duplicate';
+                renderSharedDataList();
                 renderSharedDataScanResults();
                 showToast(`重复图扫描完成：${Number(data?.group_count || 0)} 组`, 'info', 1500);
             }
@@ -10280,6 +10407,7 @@
                         1800
                     );
                     sharedDataStage = 'cleaned';
+                    sharedDataViewTab = 'cleaned';
                     sharedDataSelection = new Set();
                     clearSharedDataScanResults();
                     await loadSharedDataList('cleaned', { force: true });
@@ -10485,6 +10613,10 @@
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
+            const dataMgmtTabRaw = document.getElementById('dataMgmtTabRaw');
+            const dataMgmtTabDuplicate = document.getElementById('dataMgmtTabDuplicate');
+            const dataMgmtTabDamaged = document.getElementById('dataMgmtTabDamaged');
+            const dataMgmtTabCleaned = document.getElementById('dataMgmtTabCleaned');
 
             applyTheme(getStoredTheme(), false);
 
@@ -10517,6 +10649,10 @@
             }
             if (dataMgmtSelectDamagedBtn) dataMgmtSelectDamagedBtn.addEventListener('click', () => selectSharedDataDamagedCandidates());
             if (dataMgmtSelectDuplicatesBtn) dataMgmtSelectDuplicatesBtn.addEventListener('click', () => selectSharedDataDuplicateCandidates());
+            if (dataMgmtTabRaw) dataMgmtTabRaw.addEventListener('click', () => { sharedDataViewTab = 'raw'; renderSharedDataList(); });
+            if (dataMgmtTabDuplicate) dataMgmtTabDuplicate.addEventListener('click', () => { sharedDataViewTab = 'duplicate'; renderSharedDataList(); });
+            if (dataMgmtTabDamaged) dataMgmtTabDamaged.addEventListener('click', () => { sharedDataViewTab = 'damaged'; renderSharedDataList(); });
+            if (dataMgmtTabCleaned) dataMgmtTabCleaned.addEventListener('click', () => { sharedDataViewTab = 'cleaned'; renderSharedDataList(); });
             if (dataMgmtDropzone && dataMgmtFileInput) {
                 dataMgmtDropzone.addEventListener('dragover', (e) => {
                     e.preventDefault();
