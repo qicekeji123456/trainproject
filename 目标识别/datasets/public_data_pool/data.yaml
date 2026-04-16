@@ -1,0 +1,6 @@
+path: F:/yolov11/shared_data
+train: cleaned
+val: cleaned
+
+names:
+  0: object

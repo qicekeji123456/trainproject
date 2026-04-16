@@ -8636,8 +8636,8 @@
                         <div class="data-mgmt-step">
                             <div class="data-mgmt-step-index">3</div>
                             <div class="data-mgmt-step-text">
-                                <div class="data-mgmt-step-title">分发到任务</div>
-                                <div class="data-mgmt-step-desc">将清洗后的数据发送到目标识别或图像分割。</div>
+                                <div class="data-mgmt-step-title">数据发布</div>
+                                <div class="data-mgmt-step-desc">将清洗结果发布到公共数据池，供目标检测和图像分割选择。</div>
                             </div>
                         </div>
                     </div>
@@ -8663,9 +8663,7 @@
                                 <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
                             </div>
                             <div class="data-mgmt-preview-actions">
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
+                                <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">数据发布</button>
                             </div>
                         </div>
                         <div class="data-mgmt-preview-body">
@@ -8674,7 +8672,7 @@
                                     <button class="data-mgmt-tab-btn active" id="dataMgmtTabRaw" type="button">原始图 <span class="data-mgmt-tab-count" id="dataMgmtTabRawCount">0</span></button>
                                     <button class="data-mgmt-tab-btn" id="dataMgmtTabDuplicate" type="button">重复图 <span class="data-mgmt-tab-count" id="dataMgmtTabDuplicateCount">0</span></button>
                                     <button class="data-mgmt-tab-btn" id="dataMgmtTabDamaged" type="button">损坏图 <span class="data-mgmt-tab-count" id="dataMgmtTabDamagedCount">0</span></button>
-                                    <button class="data-mgmt-tab-btn" id="dataMgmtTabCleaned" type="button">清洗后数据 <span class="data-mgmt-tab-count" id="dataMgmtTabCleanedCount">0</span></button>
+                                    <button class="data-mgmt-tab-btn" id="dataMgmtTabCleaned" type="button">公共数据池 <span class="data-mgmt-tab-count" id="dataMgmtTabCleanedCount">0</span></button>
                                 </div>
                                 <label class="image-filter-check" style="margin:0;">
                                     <input type="checkbox" id="dataMgmtSelectAll">
@@ -10467,8 +10465,6 @@
                 const isCleaned = sharedDataStage === "cleaned";
                 const titleEl = document.getElementById("dataMgmtPanelTitle");
                 const publishBtn = document.getElementById("dataMgmtPublishBtn");
-                const detectBtn = document.getElementById("dataMgmtDistributeDetectBtn");
-                const segmentBtn = document.getElementById("dataMgmtDistributeSegmentBtn");
                 const uploadDropzoneEl = document.getElementById("dataMgmtSidebarDropzone") || document.getElementById("dataMgmtDropzone");
                 const zipUploadEl = document.getElementById("dataMgmtSidebarZipUpload");
                 const chooseImagesBtn = document.getElementById("dataMgmtChooseImagesBtn");
@@ -10479,7 +10475,7 @@
                 const selectedCount = getSelectedSharedDataFilenames().length;
                 const disableStageActions = sharedDataBusy || sharedDataActionBusy;
 
-                if (titleEl) titleEl.textContent = isCleaned ? '\u6e05\u6d17\u540e\u6570\u636e' : '\u539f\u59cb\u6570\u636e';
+                if (titleEl) titleEl.textContent = isCleaned ? '\u516c\u5171\u6570\u636e\u6c60' : '\u539f\u59cb\u6570\u636e';
                 if (dataMgmtWorkflowSteps.length) {
                     dataMgmtWorkflowSteps.forEach((step, idx) => {
                         const active = isCleaned ? idx >= 1 : idx === 0;
@@ -10495,8 +10491,6 @@
                 if (scanDuplicatesBtn) scanDuplicatesBtn.disabled = disableStageActions;
                 if (deleteBtn) deleteBtn.disabled = disableStageActions || selectedCount <= 0;
                 if (publishBtn) publishBtn.disabled = disableStageActions || isCleaned || selectedCount <= 0;
-                if (detectBtn) detectBtn.disabled = disableStageActions || !isCleaned || selectedCount <= 0;
-                if (segmentBtn) segmentBtn.disabled = disableStageActions || !isCleaned || selectedCount <= 0;
             }
             function renderSharedDataList() {
                 const listEl = document.getElementById('dataMgmtList');
@@ -10507,7 +10501,7 @@
                 if (!listEl) return;
 
                 const keyword = String(searchEl?.value || '').trim().toLowerCase();
-                const tabTitleMap = { raw: '原始图', duplicate: '重复图', damaged: '损坏图', cleaned: '清洗后数据' };
+                const tabTitleMap = { raw: '原始图', duplicate: '重复图', damaged: '损坏图', cleaned: '公共数据池' };
                 sharedDataViewTab = normalizeSharedDataViewTab(sharedDataViewTab);
                 renderSharedDataTabs();
                 const visibleItems = getSharedDataItemsForTab(sharedDataViewTab, keyword);
@@ -10721,7 +10715,7 @@
                     const previousRevision = String(sharedDataRevision || '').trim();
                     const resp = await fetch(`/api/data-management/list?stage=${encodeURIComponent(nextStage)}&t=${Date.now()}`);
                     const data = await resp.json().catch(() => ({}));
-                    if (!resp.ok) throw new Error(data?.error || '加载共享数据池失败');
+                    if (!resp.ok) throw new Error(data?.error || '加载数据管理失败');
                     sharedDataItems = Array.isArray(data?.items) ? data.items : [];
                     sharedDataRevision = String(data?.revision || '').trim();
                     if (previousRevision && sharedDataRevision && previousRevision !== sharedDataRevision) {
@@ -10763,7 +10757,7 @@
                     }
                     clearSharedDataScanResults();
                     setSharedDataUploadStatus(`\u5df2\u5bfc\u5165 ${successCount} \u5f20\u56fe\u7247\u3002`, 'success');
-                    showToast(`\u5df2\u4e0a\u4f20 ${successCount} \u5f20\u56fe\u7247\u5230${sharedDataStage === 'cleaned' ? '\u5171\u4eab\u6e05\u6d17\u6c60' : '\u539f\u59cb\u6570\u636e\u6c60'}`, 'success', 1500);
+                    showToast(`\u5df2\u4e0a\u4f20 ${successCount} \u5f20\u56fe\u7247\u5230${sharedDataStage === 'cleaned' ? '\u516c\u5171\u6570\u636e\u6c60' : '\u539f\u59cb\u6570\u636e'}`, 'success', 1500);
                     await loadSharedDataList(sharedDataStage, { force: true });
                 } catch (error) {
                     setSharedDataUploadStatus(`\u4e0a\u4f20\u5931\u8d25\uff1a${error?.message || error}`, 'warning');
@@ -10820,7 +10814,7 @@
                         body: JSON.stringify({ filenames })
                     });
                     const data = await resp.json().catch(() => ({}));
-                    if (!resp.ok) throw new Error(data?.error || '\u53d1\u5e03\u5230\u5171\u4eab\u6e05\u6d17\u6c60\u5931\u8d25');
+                    if (!resp.ok) throw new Error(data?.error || '\u6570\u636e\u53d1\u5e03\u5931\u8d25');
                     const copiedCount = Number(data?.copied_count || 0);
                     const skippedCount = Number(data?.skipped_count || 0);
                     if (copiedCount <= 0) {
@@ -10829,7 +10823,7 @@
                     showToast(
                         skippedCount > 0
                             ? `\u5df2\u53d1\u5e03 ${copiedCount} \u5f20\uff0c\u8df3\u8fc7 ${skippedCount} \u5f20`
-                            : `\u5df2\u53d1\u5e03 ${copiedCount} \u5f20\u56fe\u7247\u5230\u5171\u4eab\u6e05\u6d17\u6c60`,
+                            : `\u5df2\u53d1\u5e03 ${copiedCount} \u5f20\u56fe\u7247\u5230\u516c\u5171\u6570\u636e\u6c60`,
                         skippedCount > 0 ? 'warning' : 'success',
                         1800
                     );
@@ -10843,49 +10837,11 @@
                 }
             }
 
-            async function distributeSharedDataSelection(targetTask) {
-                const filenames = getSelectedSharedDataFilenames();
-                if (!filenames.length) throw new Error('请先选择要分发的数据');
-                setSharedDataActionBusy(true);
-                try {
-                    const resp = await fetch('/api/data-management/distribute', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ filenames, target_task: targetTask })
-                    });
-                    const data = await resp.json().catch(() => ({}));
-                    if (!resp.ok) throw new Error(data?.error || '分发失败');
-                    const copiedCount = Number(data?.copied_count || 0);
-                    const skippedCount = Number(data?.skipped_count || 0);
-                    if (copiedCount <= 0) {
-                        throw new Error(skippedCount > 0 ? '所选图片都未成功分发，请检查共享清洗池中的文件。' : '没有可分发的图片');
-                    }
-                    const taskName = targetTask === 'segment' ? '图像分割' : '目标识别';
-                    const scopeText = String(data?.target_scope || '') === 'user' ? '当前账号' : '共享';
-                    showToast(
-                        skippedCount > 0
-                            ? `已分发 ${copiedCount} 张到${taskName}，跳过 ${skippedCount} 张`
-                            : `已分发 ${copiedCount} 张图片到${taskName}`,
-                        skippedCount > 0 ? 'warning' : 'success',
-                        1800
-                    );
-                    if (targetTask === currentTaskType) {
-                        await syncUploadedImagesFromServer({ silent: true, force: true });
-                    }
-                    const targetDir = String(data?.target_dir || '').trim();
-                    if (targetDir) {
-                        setAnnotationStatus(`已分发到${scopeText}${taskName}目录：${targetDir}`, 2200);
-                    }
-                } finally {
-                    setSharedDataActionBusy(false);
-                }
-            }
-
             async function deleteSharedDataSelection() {
                 const filenames = getSelectedSharedDataFilenames();
                 if (!filenames.length) throw new Error('请先选择要删除的数据');
                 const confirmed = await openConfirmModal({
-                    title: '删除共享数据池文件',
+                    title: '删除数据文件',
                     message: `确定删除已选的 ${filenames.length} 张图片吗？`,
                     okText: '删除',
                     danger: true,
@@ -10968,7 +10924,7 @@
                         loadTrainHistory();
                     } else if (tab.dataset.tab === 'dataManagement') {
                         loadSharedDataList(sharedDataStage, { force: true }).catch((e) => {
-                            showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600);
+                            showToast(`加载数据管理失败: ${e?.message || e}`, 'error', 1600);
                         });
                     } else if (tab.dataset.tab === 'validation') {
                         loadDatasets();
@@ -11024,8 +10980,6 @@
             const authUserDeleteBtn = document.getElementById('authUserDeleteBtn');
             const selfPasswordSaveBtn = document.getElementById('selfPasswordSaveBtn');
             const dataMgmtPublishBtn = document.getElementById('dataMgmtPublishBtn');
-            const dataMgmtDistributeDetectBtn = document.getElementById('dataMgmtDistributeDetectBtn');
-            const dataMgmtDistributeSegmentBtn = document.getElementById('dataMgmtDistributeSegmentBtn');
             const dataMgmtDeleteBtn = document.getElementById('dataMgmtDeleteBtn');
             const dataMgmtScanDamagedBtn = document.getElementById('dataMgmtScanDamagedBtn');
             const dataMgmtScanDuplicatesBtn = document.getElementById('dataMgmtScanDuplicatesBtn');
@@ -11081,7 +11035,7 @@
             if (dataMgmtTabRaw) {
                 dataMgmtTabRaw.addEventListener('click', () => {
                     if (sharedDataStage !== 'raw') {
-                        loadSharedDataList('raw', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        loadSharedDataList('raw', { force: true }).catch((e) => showToast(`加载数据管理失败: ${e?.message || e}`, 'error', 1600));
                         return;
                     }
                     sharedDataViewTab = 'raw';
@@ -11094,7 +11048,7 @@
                         loadSharedDataList('raw', { force: true }).then(() => {
                             sharedDataViewTab = 'duplicate';
                             renderSharedDataList();
-                        }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        }).catch((e) => showToast(`加载数据管理失败: ${e?.message || e}`, 'error', 1600));
                         return;
                     }
                     sharedDataViewTab = 'duplicate';
@@ -11107,7 +11061,7 @@
                         loadSharedDataList('raw', { force: true }).then(() => {
                             sharedDataViewTab = 'damaged';
                             renderSharedDataList();
-                        }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        }).catch((e) => showToast(`加载数据管理失败: ${e?.message || e}`, 'error', 1600));
                         return;
                     }
                     sharedDataViewTab = 'damaged';
@@ -11117,7 +11071,7 @@
             if (dataMgmtTabCleaned) {
                 dataMgmtTabCleaned.addEventListener('click', () => {
                     if (sharedDataStage !== 'cleaned') {
-                        loadSharedDataList('cleaned', { force: true }).catch((e) => showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600));
+                        loadSharedDataList('cleaned', { force: true }).catch((e) => showToast(`加载数据管理失败: ${e?.message || e}`, 'error', 1600));
                         return;
                     }
                     sharedDataViewTab = 'cleaned';
@@ -11136,7 +11090,7 @@
                     try {
                         await uploadSharedDataFiles(e.dataTransfer?.files || []);
                     } catch (err) {
-                        showToast(`上传到共享数据池失败: ${err?.message || err}`, 'error', 1800);
+                        showToast(`上传数据失败: ${err?.message || err}`, 'error', 1800);
                     }
                 });
             }
@@ -11189,7 +11143,7 @@
                     try {
                         await uploadSharedDataFiles(e.target.files);
                     } catch (err) {
-                        showToast(`上传到共享数据池失败: ${err?.message || err}`, 'error', 1800);
+                        showToast(`上传数据失败: ${err?.message || err}`, 'error', 1800);
                     } finally {
                         e.target.value = '';
                     }
@@ -11223,25 +11177,7 @@
                     try {
                         await publishSharedDataSelection();
                     } catch (e) {
-                        showToast(`发布共享清洗数据失败: ${e?.message || e}`, 'error', 1800);
-                    }
-                });
-            }
-            if (dataMgmtDistributeDetectBtn) {
-                dataMgmtDistributeDetectBtn.addEventListener('click', async () => {
-                    try {
-                        await distributeSharedDataSelection('detect');
-                    } catch (e) {
-                        showToast(`分发到目标识别失败: ${e?.message || e}`, 'error', 1800);
-                    }
-                });
-            }
-            if (dataMgmtDistributeSegmentBtn) {
-                dataMgmtDistributeSegmentBtn.addEventListener('click', async () => {
-                    try {
-                        await distributeSharedDataSelection('segment');
-                    } catch (e) {
-                        showToast(`分发到图像分割失败: ${e?.message || e}`, 'error', 1800);
+                        showToast(`数据发布失败: ${e?.message || e}`, 'error', 1800);
                     }
                 });
             }
@@ -11250,7 +11186,7 @@
                     try {
                         await deleteSharedDataSelection();
                     } catch (e) {
-                        showToast(`删除共享数据池文件失败: ${e?.message || e}`, 'error', 1800);
+                        showToast(`删除数据失败: ${e?.message || e}`, 'error', 1800);
                     }
                 });
             }
@@ -16870,15 +16806,25 @@
             const datasetSelect = document.getElementById('datasetSelect');
             const trainDatasetPath = document.getElementById('trainDatasetPath');
             try {
+                const getDatasetDisplayName = (dataset) => {
+                    const rawName = String(dataset?.name || '').trim();
+                    return rawName === 'public_data_pool' ? '公共数据池' : rawName;
+                };
                 const response = await fetch('/api/datasets');
-                const datasets = await response.json();
+                const datasets = (await response.json()).slice().sort((a, b) => {
+                    const aName = getDatasetDisplayName(a);
+                    const bName = getDatasetDisplayName(b);
+                    if (aName === '公共数据池' && bName !== '公共数据池') return -1;
+                    if (bName === '公共数据池' && aName !== '公共数据池') return 1;
+                    return aName.localeCompare(bName, 'zh-CN');
+                });
                 availableDatasets = datasets;
                 if (datasetSelect) {
                     datasetSelect.innerHTML = `<option value="">${datasets.length ? '-- 请选择当前工作区数据集 --' : '-- 当前工作区暂无数据集（可从标注页面创建） --'}</option>`;
                     datasets.forEach(dataset => {
                         const option = document.createElement('option');
                         option.value = dataset.yaml_path;
-                        option.textContent = dataset.name;
+                        option.textContent = getDatasetDisplayName(dataset);
                         datasetSelect.appendChild(option);
                     });
                     if (trainDatasetPath && !trainDatasetPath.value) {
@@ -23272,7 +23218,7 @@
                 document.body.dataset.entryMode = 'dataManagement';
                 currentMainTab = 'dataManagement';
                 loadSharedDataList(sharedDataStage, { force: true }).catch((e) => {
-                    showToast(`加载共享数据池失败: ${e?.message || e}`, 'error', 1600);
+                    showToast(`加载数据管理失败: ${e?.message || e}`, 'error', 1600);
                 });
                 saveUIState();
                 return true;
