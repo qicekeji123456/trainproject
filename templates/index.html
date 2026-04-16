@@ -4123,6 +4123,59 @@
             padding: 0 14px 14px;
         }
 
+        .data-mgmt-config-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .data-mgmt-config-item {
+            display: grid;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+                rgba(255, 255, 255, 0.02);
+        }
+
+        .data-mgmt-config-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .data-mgmt-config-title {
+            color: #dce5ef;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .data-mgmt-config-desc {
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .data-mgmt-config-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-mgmt-config-inline .training-input {
+            width: 88px;
+        }
+
+        .data-mgmt-config-value {
+            color: #dce5ef;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
         .data-mgmt-sidebar > .data-mgmt-section:last-child .data-mgmt-section-body {
             flex: 1;
             min-height: 0;
@@ -7769,6 +7822,20 @@
             color: #1f2328 !important;
         }
 
+        body[data-theme="light"] .data-mgmt-config-item {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-config-title,
+        body[data-theme="light"] .data-mgmt-config-value {
+            color: #1f2937 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-config-desc {
+            color: #66707b !important;
+        }
+
         body[data-theme="light"] .data-mgmt-action-group {
             background: #f8fafc !important;
             border-color: #e2e8f0 !important;
@@ -8612,6 +8679,46 @@
                             </div>
                         </div>
                         <div class="data-mgmt-upload-status" id="dataMgmtUploadStatus">支持图片、多图、文件夹和 ZIP 压缩包上传。</div>
+                    </div>
+                </section>
+
+                <section class="data-mgmt-section">
+                    <div class="data-mgmt-section-head">
+                        <div>
+                            <div class="data-mgmt-section-title">清洗配置</div>
+                            <div class="data-mgmt-section-subtitle">设置当前数据清洗的扫描规则和结果展示方式。</div>
+                        </div>
+                    </div>
+                    <div class="data-mgmt-section-body">
+                        <div class="data-mgmt-config-list">
+                            <div class="data-mgmt-config-item">
+                                <div class="data-mgmt-config-head">
+                                    <div class="data-mgmt-config-title">重复图阈值</div>
+                                    <div class="data-mgmt-config-inline">
+                                        <input class="training-input" id="dataMgmtDuplicateThreshold" type="number" min="0" max="16" step="1" value="6">
+                                        <span class="data-mgmt-config-value" id="dataMgmtDuplicateThresholdValue">6</span>
+                                    </div>
+                                </div>
+                                <div class="data-mgmt-config-desc">数值越小越严格，越大越容易识别为近重复图。扫描重复图时立即生效。</div>
+                            </div>
+                            <div class="data-mgmt-config-item">
+                                <div class="data-mgmt-config-head">
+                                    <div class="data-mgmt-config-title">扫描后自动切换</div>
+                                    <label class="image-filter-check" style="margin:0;">
+                                        <input id="dataMgmtAutoFocusResult" type="checkbox" checked>
+                                        <span>开启</span>
+                                    </label>
+                                </div>
+                                <div class="data-mgmt-config-desc">发现损坏图或重复图后，自动切换到对应结果页，方便立即复核。</div>
+                            </div>
+                            <div class="data-mgmt-config-item">
+                                <div class="data-mgmt-config-head">
+                                    <div class="data-mgmt-config-title">默认保留策略</div>
+                                    <div class="data-mgmt-config-value">保留首张图</div>
+                                </div>
+                                <div class="data-mgmt-config-desc">当前重复图扫描结果按默认保留图展示，其余图片列为重复候选。</div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -10088,6 +10195,7 @@
             let sharedDataDuplicateScan = null;
             let sharedDataActionBusy = false;
             let sharedDataViewTab = 'raw';
+            const DATA_MGMT_CONFIG_STORAGE_KEY = 'yolov11_data_management_config';
             const THEME_STORAGE_KEY = 'yolov11_ui_theme';
             let currentTheme = 'dark';
 
@@ -10173,6 +10281,47 @@
                 sharedDataDuplicateScan = null;
                 if (sharedDataStage === 'cleaned') sharedDataViewTab = 'cleaned';
                 else sharedDataViewTab = 'raw';
+            }
+
+            function getDataMgmtConfig() {
+                const defaults = {
+                    duplicateThreshold: 6,
+                    autoFocusResult: true,
+                };
+                try {
+                    const raw = localStorage.getItem(DATA_MGMT_CONFIG_STORAGE_KEY);
+                    if (!raw) return defaults;
+                    const parsed = JSON.parse(raw);
+                    return {
+                        duplicateThreshold: Math.max(0, Math.min(16, Number(parsed?.duplicateThreshold ?? defaults.duplicateThreshold) || defaults.duplicateThreshold)),
+                        autoFocusResult: parsed?.autoFocusResult !== false,
+                    };
+                } catch (e) {
+                    return defaults;
+                }
+            }
+
+            function saveDataMgmtConfig(nextConfig = {}) {
+                const current = getDataMgmtConfig();
+                const merged = {
+                    duplicateThreshold: Math.max(0, Math.min(16, Number(nextConfig?.duplicateThreshold ?? current.duplicateThreshold) || current.duplicateThreshold)),
+                    autoFocusResult: nextConfig?.autoFocusResult ?? current.autoFocusResult,
+                };
+                try {
+                    localStorage.setItem(DATA_MGMT_CONFIG_STORAGE_KEY, JSON.stringify(merged));
+                } catch (e) {}
+                return merged;
+            }
+
+            function applyDataMgmtConfigToUI() {
+                const config = getDataMgmtConfig();
+                const thresholdInput = document.getElementById('dataMgmtDuplicateThreshold');
+                const thresholdValue = document.getElementById('dataMgmtDuplicateThresholdValue');
+                const autoFocusInput = document.getElementById('dataMgmtAutoFocusResult');
+                if (thresholdInput) thresholdInput.value = String(config.duplicateThreshold);
+                if (thresholdValue) thresholdValue.textContent = String(config.duplicateThreshold);
+                if (autoFocusInput) autoFocusInput.checked = Boolean(config.autoFocusResult);
+                return config;
             }
             function getSharedDataClassification() {
                 const damagedSet = new Set(
@@ -10460,22 +10609,25 @@
                     `;
             }
             async function scanSharedDataDamaged() {
+                const config = getDataMgmtConfig();
                 const resp = await fetch(`/api/data-management/scan-damaged?stage=${encodeURIComponent(sharedDataStage)}&t=${Date.now()}`);
                 const data = await resp.json().catch(() => ({}));
                 if (!resp.ok) throw new Error(data?.error || '扫描损坏图失败');
                 sharedDataDamagedScan = data || null;
-                if (Number(data?.count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'damaged';
+                if (config.autoFocusResult && Number(data?.count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'damaged';
                 renderSharedDataList();
                 renderSharedDataScanResults();
                 showToast(`损坏图扫描完成：${Number(data?.count || 0)} 项`, 'info', 1500);
             }
 
             async function scanSharedDataDuplicates() {
-                const resp = await fetch(`/api/data-management/scan-duplicates?stage=${encodeURIComponent(sharedDataStage)}&threshold=6&t=${Date.now()}`);
+                const config = getDataMgmtConfig();
+                const threshold = Math.max(0, Math.min(16, Number(config?.duplicateThreshold || 6) || 6));
+                const resp = await fetch(`/api/data-management/scan-duplicates?stage=${encodeURIComponent(sharedDataStage)}&threshold=${encodeURIComponent(threshold)}&t=${Date.now()}`);
                 const data = await resp.json().catch(() => ({}));
                 if (!resp.ok) throw new Error(data?.error || '扫描重复图失败');
                 sharedDataDuplicateScan = data || null;
-                if (Number(data?.candidate_delete_count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'duplicate';
+                if (config.autoFocusResult && Number(data?.candidate_delete_count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'duplicate';
                 renderSharedDataList();
                 renderSharedDataScanResults();
                 showToast(`重复图扫描完成：${Number(data?.group_count || 0)} 组`, 'info', 1500);
@@ -10830,6 +10982,8 @@
             const dataMgmtChooseImagesBtn = document.getElementById('dataMgmtChooseImagesBtn');
             const dataMgmtChooseFolderBtn = document.getElementById('dataMgmtChooseFolderBtn');
             const dataMgmtZipUpload = document.getElementById('dataMgmtSidebarZipUpload');
+            const dataMgmtDuplicateThreshold = document.getElementById('dataMgmtDuplicateThreshold');
+            const dataMgmtAutoFocusResult = document.getElementById('dataMgmtAutoFocusResult');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
@@ -10839,6 +10993,7 @@
             const dataMgmtTabCleaned = document.getElementById('dataMgmtTabCleaned');
 
             applyTheme(getStoredTheme(), false);
+            applyDataMgmtConfigToUI();
 
             if (toggleThemeBtn) {
                 toggleThemeBtn.addEventListener('click', () => toggleTheme());
@@ -10961,6 +11116,19 @@
                         return;
                     }
                     dataMgmtZipInput.click();
+                });
+            }
+            if (dataMgmtDuplicateThreshold) {
+                dataMgmtDuplicateThreshold.addEventListener('input', (e) => {
+                    const value = Math.max(0, Math.min(16, Number(e.target?.value || 6) || 6));
+                    saveDataMgmtConfig({ duplicateThreshold: value });
+                    applyDataMgmtConfigToUI();
+                });
+            }
+            if (dataMgmtAutoFocusResult) {
+                dataMgmtAutoFocusResult.addEventListener('change', (e) => {
+                    saveDataMgmtConfig({ autoFocusResult: Boolean(e.target?.checked) });
+                    applyDataMgmtConfigToUI();
                 });
             }
             if (dataMgmtFileInput) {
