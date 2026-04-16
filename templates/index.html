@@ -4176,6 +4176,44 @@
             white-space: nowrap;
         }
 
+        .data-mgmt-config-check-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .data-mgmt-config-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(111, 124, 138, 0.14);
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        .data-mgmt-config-check input {
+            margin-top: 2px;
+        }
+
+        .data-mgmt-config-check-main {
+            display: grid;
+            gap: 4px;
+        }
+
+        .data-mgmt-config-check-title {
+            color: #dce5ef;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .data-mgmt-config-check-desc {
+            color: #8f9cab;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
         .data-mgmt-sidebar > .data-mgmt-section:last-child .data-mgmt-section-body {
             flex: 1;
             min-height: 0;
@@ -7836,6 +7874,19 @@
             color: #66707b !important;
         }
 
+        body[data-theme="light"] .data-mgmt-config-check {
+            background: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-config-check-title {
+            color: #1f2937 !important;
+        }
+
+        body[data-theme="light"] .data-mgmt-config-check-desc {
+            color: #66707b !important;
+        }
+
         body[data-theme="light"] .data-mgmt-action-group {
             background: #f8fafc !important;
             border-color: #e2e8f0 !important;
@@ -8612,8 +8663,6 @@
                                 <div class="data-mgmt-panel-meta" id="dataMgmtSummaryText">0 项</div>
                             </div>
                             <div class="data-mgmt-preview-actions">
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDamagedBtn" type="button">扫描损坏图</button>
-                                <button class="data-mgmt-preview-action-btn" id="dataMgmtScanDuplicatesBtn" type="button">扫描重复图</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtPublishBtn" type="button">发布到清洗后数据</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeDetectBtn" type="button">分发到目标识别</button>
                                 <button class="data-mgmt-preview-action-btn" id="dataMgmtDistributeSegmentBtn" type="button">分发到图像分割</button>
@@ -8703,13 +8752,24 @@
                             </div>
                             <div class="data-mgmt-config-item">
                                 <div class="data-mgmt-config-head">
-                                    <div class="data-mgmt-config-title">扫描后自动切换</div>
-                                    <label class="image-filter-check" style="margin:0;">
-                                        <input id="dataMgmtAutoFocusResult" type="checkbox" checked>
-                                        <span>开启</span>
+                                    <div class="data-mgmt-config-title">清洗扫描</div>
+                                </div>
+                                <div class="data-mgmt-config-check-grid">
+                                    <label class="data-mgmt-config-check">
+                                        <input id="dataMgmtScanDamagedBtn" type="checkbox">
+                                        <span class="data-mgmt-config-check-main">
+                                            <span class="data-mgmt-config-check-title">扫描损坏图</span>
+                                            <span class="data-mgmt-config-check-desc">检查无法解码或已损坏的图片，结果自动切到损坏图页。</span>
+                                        </span>
+                                    </label>
+                                    <label class="data-mgmt-config-check">
+                                        <input id="dataMgmtScanDuplicatesBtn" type="checkbox">
+                                        <span class="data-mgmt-config-check-main">
+                                            <span class="data-mgmt-config-check-title">扫描重复图</span>
+                                            <span class="data-mgmt-config-check-desc">按当前阈值扫描完全重复和近重复图片，结果自动切到重复图页。</span>
+                                        </span>
                                     </label>
                                 </div>
-                                <div class="data-mgmt-config-desc">发现损坏图或重复图后，自动切换到对应结果页，方便立即复核。</div>
                             </div>
                             <div class="data-mgmt-config-item">
                                 <div class="data-mgmt-config-head">
@@ -10286,7 +10346,6 @@
             function getDataMgmtConfig() {
                 const defaults = {
                     duplicateThreshold: 6,
-                    autoFocusResult: true,
                 };
                 try {
                     const raw = localStorage.getItem(DATA_MGMT_CONFIG_STORAGE_KEY);
@@ -10294,7 +10353,6 @@
                     const parsed = JSON.parse(raw);
                     return {
                         duplicateThreshold: Math.max(0, Math.min(16, Number(parsed?.duplicateThreshold ?? defaults.duplicateThreshold) || defaults.duplicateThreshold)),
-                        autoFocusResult: parsed?.autoFocusResult !== false,
                     };
                 } catch (e) {
                     return defaults;
@@ -10305,7 +10363,6 @@
                 const current = getDataMgmtConfig();
                 const merged = {
                     duplicateThreshold: Math.max(0, Math.min(16, Number(nextConfig?.duplicateThreshold ?? current.duplicateThreshold) || current.duplicateThreshold)),
-                    autoFocusResult: nextConfig?.autoFocusResult ?? current.autoFocusResult,
                 };
                 try {
                     localStorage.setItem(DATA_MGMT_CONFIG_STORAGE_KEY, JSON.stringify(merged));
@@ -10317,10 +10374,8 @@
                 const config = getDataMgmtConfig();
                 const thresholdInput = document.getElementById('dataMgmtDuplicateThreshold');
                 const thresholdValue = document.getElementById('dataMgmtDuplicateThresholdValue');
-                const autoFocusInput = document.getElementById('dataMgmtAutoFocusResult');
                 if (thresholdInput) thresholdInput.value = String(config.duplicateThreshold);
                 if (thresholdValue) thresholdValue.textContent = String(config.duplicateThreshold);
-                if (autoFocusInput) autoFocusInput.checked = Boolean(config.autoFocusResult);
                 return config;
             }
             function getSharedDataClassification() {
@@ -10609,12 +10664,11 @@
                     `;
             }
             async function scanSharedDataDamaged() {
-                const config = getDataMgmtConfig();
                 const resp = await fetch(`/api/data-management/scan-damaged?stage=${encodeURIComponent(sharedDataStage)}&t=${Date.now()}`);
                 const data = await resp.json().catch(() => ({}));
                 if (!resp.ok) throw new Error(data?.error || '扫描损坏图失败');
                 sharedDataDamagedScan = data || null;
-                if (config.autoFocusResult && Number(data?.count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'damaged';
+                if (Number(data?.count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'damaged';
                 renderSharedDataList();
                 renderSharedDataScanResults();
                 showToast(`损坏图扫描完成：${Number(data?.count || 0)} 项`, 'info', 1500);
@@ -10627,7 +10681,7 @@
                 const data = await resp.json().catch(() => ({}));
                 if (!resp.ok) throw new Error(data?.error || '扫描重复图失败');
                 sharedDataDuplicateScan = data || null;
-                if (config.autoFocusResult && Number(data?.candidate_delete_count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'duplicate';
+                if (Number(data?.candidate_delete_count || 0) > 0 && sharedDataStage !== 'cleaned') sharedDataViewTab = 'duplicate';
                 renderSharedDataList();
                 renderSharedDataScanResults();
                 showToast(`重复图扫描完成：${Number(data?.group_count || 0)} 组`, 'info', 1500);
@@ -10983,7 +11037,6 @@
             const dataMgmtChooseFolderBtn = document.getElementById('dataMgmtChooseFolderBtn');
             const dataMgmtZipUpload = document.getElementById('dataMgmtSidebarZipUpload');
             const dataMgmtDuplicateThreshold = document.getElementById('dataMgmtDuplicateThreshold');
-            const dataMgmtAutoFocusResult = document.getElementById('dataMgmtAutoFocusResult');
             const dataMgmtWorkflowSteps = Array.from(document.querySelectorAll('.data-mgmt-step'));
             const dataMgmtSearchInput = document.getElementById('dataMgmtSearchInput');
             const dataMgmtSelectAll = document.getElementById('dataMgmtSelectAll');
@@ -11002,20 +11055,26 @@
             updateSharedDataStageUI();
             renderSharedDataScanResults();
             if (dataMgmtScanDamagedBtn) {
-                dataMgmtScanDamagedBtn.addEventListener('click', async () => {
+                dataMgmtScanDamagedBtn.addEventListener('change', async (e) => {
+                    if (!e.target?.checked) return;
                     try {
                         await scanSharedDataDamaged();
                     } catch (e) {
                         showToast(`扫描损坏图失败: ${e?.message || e}`, 'error', 1800);
+                    } finally {
+                        e.target.checked = false;
                     }
                 });
             }
             if (dataMgmtScanDuplicatesBtn) {
-                dataMgmtScanDuplicatesBtn.addEventListener('click', async () => {
+                dataMgmtScanDuplicatesBtn.addEventListener('change', async (e) => {
+                    if (!e.target?.checked) return;
                     try {
                         await scanSharedDataDuplicates();
                     } catch (e) {
                         showToast(`扫描重复图失败: ${e?.message || e}`, 'error', 1800);
+                    } finally {
+                        e.target.checked = false;
                     }
                 });
             }
@@ -11122,12 +11181,6 @@
                 dataMgmtDuplicateThreshold.addEventListener('input', (e) => {
                     const value = Math.max(0, Math.min(16, Number(e.target?.value || 6) || 6));
                     saveDataMgmtConfig({ duplicateThreshold: value });
-                    applyDataMgmtConfigToUI();
-                });
-            }
-            if (dataMgmtAutoFocusResult) {
-                dataMgmtAutoFocusResult.addEventListener('change', (e) => {
-                    saveDataMgmtConfig({ autoFocusResult: Boolean(e.target?.checked) });
                     applyDataMgmtConfigToUI();
                 });
             }
